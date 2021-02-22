@@ -1,0 +1,24 @@
+name: flutter_getui
+description: getui flutter plugin
+version: 0.0.1
+homepage: https://github.com/Wayaer/flutter_getui.git
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: flutter.getui
+        pluginClass: GeTuiPlugin
+      ios:
+        pluginClass: GetuiflutPlugin
