@@ -60,7 +60,7 @@
     NSDictionary *ConfigurationInfo = call.arguments;
     // [ GTSdk ]：使用APPID/APPKEY/APPSECRENT启动个推
     [GeTuiSdk startSdkWithAppId:ConfigurationInfo[@"appId"] appKey:ConfigurationInfo[@"appKey"] appSecret:ConfigurationInfo[@"appSecret"] delegate:self];
-    
+//    [GeTuiSdk registerRemoteNotification:(UNAuthorizationOptions) ];
     // 注册VoipToken
     [self voipRegistration];
 }
@@ -118,7 +118,7 @@
 /** 远程通知注册成功委托 */
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     // [3]:向个推服务器注册deviceToken 为了方便开发者，建议使用新方法
-    [GeTuiSdk registerDeviceTokenData:deviceToken];
+//    [GeTuiSdk registerDeviceTokenData:deviceToken];
     NSString *token = [self getHexStringForData:deviceToken];
     NSLog(@"\n>>>[DeviceToken(NSString)]: %@\n\n", token);
     [_channel invokeMethod:@"onRegisterDeviceToken" arguments:token];
@@ -132,7 +132,7 @@
 #pragma mark - APP运行中接收到通知(推送)处理 - iOS 10以下版本收到推送
 
 /** APP已经接收到“远程”通知(推送) - (App运行在后台)  */
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(BOOL (^)(UIBackgroundFetchResult result))completionHandler {
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler {
     
     // [ GTSdk ]：将收到的APNs信息传给个推统计
     [GeTuiSdk handleRemoteNotification:userInfo];
