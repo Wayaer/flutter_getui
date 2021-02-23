@@ -1,5 +1,5 @@
 #import <Flutter/Flutter.h>
 
-@interface GetuiflutPlugin : NSObject<FlutterPlugin>
+@interface GeTuiPlugin : NSObject<FlutterPlugin>
 @property FlutterMethodChannel *channel;
 @end

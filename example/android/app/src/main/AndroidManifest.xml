@@ -21,7 +21,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="个推">
         <activity
-            android:name="flutter.getui.example.MainActivity"
+            android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:launchMode="singleTop"
@@ -29,15 +29,14 @@
             android:windowSoftInputMode="adjustResize">
 
             <meta-data
-                android:name="io.flutter.embedding.android.NormalTheme"
+                android:name="io.com.embedding.android.NormalTheme"
                 android:resource="@style/LaunchTheme" />
             <meta-data
-                android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
+                android:name="io.com.app.android.SplashScreenUntilFirstFrame"
                 android:value="true" />
             <meta-data
-                android:name="io.flutter.embedding.android.SplashScreenDrawable"
+                android:name="io.com.embedding.android.SplashScreenDrawable"
                 android:resource="@android:color/white" />
-
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -21,4 +21,4 @@ flutter:
         package: flutter.getui
         pluginClass: GeTuiPlugin
       ios:
-        pluginClass: GetuiflutPlugin
+        pluginClass: GeTuiPlugin

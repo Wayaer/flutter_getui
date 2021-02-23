@@ -46,7 +46,6 @@ android {
     }
     packagingOptions {
         merge 'AndroidManifest.xml'
-        merge 'proguard.txt'
     }
     lintOptions {
         disable 'InvalidPackage'

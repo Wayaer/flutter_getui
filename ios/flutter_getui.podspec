@@ -2,11 +2,11 @@
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
 #
 Pod::Spec.new do |s|
-  s.name             = 'getuiflut'
+  s.name             = 'flutter_getui'
   s.version          = '0.0.1'
-  s.summary          = 'getui plugin flutter'
+  s.summary          = 'A plugin flutter'
   s.description      = <<-DESC
-getui plugin flutter
+A new Flutter plugin.
                        DESC
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }
@@ -16,7 +16,6 @@ getui plugin flutter
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   s.dependency 'GTSDK'
-
   s.ios.deployment_target = '8.0'
   s.static_framework = true
 end

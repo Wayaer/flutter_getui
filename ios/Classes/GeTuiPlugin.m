@@ -1,4 +1,4 @@
-#import "GetuiflutPlugin.h"
+#import "GeTuiPlugin.h"
 #import <GTSDK/GeTuiSdk.h>
 #import <PushKit/PushKit.h>
 
@@ -6,23 +6,23 @@
 #import <UserNotifications/UserNotifications.h>
 #endif
 
-@interface  GetuiflutPlugin()<GeTuiSdkDelegate,UNUserNotificationCenterDelegate,PKPushRegistryDelegate> {
+@interface  GeTuiPlugin()<GeTuiSdkDelegate,UNUserNotificationCenterDelegate,PKPushRegistryDelegate> {
     NSDictionary *_launchNotification;
 }
 
 @end
 
-@implementation GetuiflutPlugin
+@implementation GeTuiPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  FlutterMethodChannel* channel = [FlutterMethodChannel
-      methodChannelWithName:@"get_tui"
-            binaryMessenger:[registrar messenger]];
-  GetuiflutPlugin* instance = [[GetuiflutPlugin alloc] init];
-  instance.channel = channel;
-  [registrar addApplicationDelegate:instance];
-  [registrar addMethodCallDelegate:instance channel:channel];
-  [instance registerRemoteNotification];
+    FlutterMethodChannel* channel = [FlutterMethodChannel
+                                     methodChannelWithName:@"get_tui"
+                                     binaryMessenger:[registrar messenger]];
+    GeTuiPlugin* plugin = [[GeTuiPlugin alloc] init];
+    plugin.channel = channel;
+    [registrar addApplicationDelegate:plugin];
+    [registrar addMethodCallDelegate:plugin channel:channel];
+    [plugin registerRemoteNotification];
 }
 
 - (id)init {
@@ -31,34 +31,32 @@
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-  if ([@"getPlatformVersion" isEqualToString:call.method]) {
-    result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
-  } else if([@"startSdk" isEqualToString:call.method]) {
-      [self startSdk:call result:result];
-  } else if([@"bindAlias" isEqualToString:call.method]) {
-      [self bindAlias:call result:result];
-  } else if([@"unbindAlias" isEqualToString:call.method]) {
-      [self unbindAlias:call result:result];
-  } else if([@"setTag" isEqualToString:call.method]) {
-      [self setTag:call result:result];
-  } else if([@"getClientId" isEqualToString:call.method]) {
-      result([GeTuiSdk clientId]);
-  } else if([@"setBadge" isEqualToString:call.method]) {
-      [self setBadge:call result:result];
-  } else if([@"resetBadge" isEqualToString:call.method]) {
-      [GeTuiSdk resetBadge];
-  } else if([@"setLocalBadge" isEqualToString:call.method]) {
-      [self setLocalBadge:call result:result];
-  } else if([@"resume" isEqualToString:call.method]) {
+    if([@"initSDK" isEqualToString:call.method]) {
+        [self initSDK:call result:result];
+    } else if([@"bindAlias" isEqualToString:call.method]) {
+        [self bindAlias:call result:result];
+    } else if([@"unbindAlias" isEqualToString:call.method]) {
+        [self unbindAlias:call result:result];
+    } else if([@"setTag" isEqualToString:call.method]) {
+        [self setTag:call result:result];
+    } else if([@"getClientId" isEqualToString:call.method]) {
+        result([GeTuiSdk clientId]);
+    } else if([@"setBadge" isEqualToString:call.method]) {
+        [self setBadge:call result:result];
+    } else if([@"resetBadge" isEqualToString:call.method]) {
+        [GeTuiSdk resetBadge];
+    } else if([@"setLocalBadge" isEqualToString:call.method]) {
+        [self setLocalBadge:call result:result];
+    } else if([@"startPush" isEqualToString:call.method]) {
         [GeTuiSdk resume];
-  } else if([@"getLaunchNotification" isEqualToString:call.method]) {
-      result(_launchNotification ?: @{});
-  } else {
-    result(FlutterMethodNotImplemented);
-  }
+    } else if([@"getLaunchNotification" isEqualToString:call.method]) {
+        result(_launchNotification ?: @{});
+    } else {
+        result(FlutterMethodNotImplemented);
+    }
 }
 
-- (void)startSdk:(FlutterMethodCall*)call result:(FlutterResult)result {
+- (void)initSDK:(FlutterMethodCall*)call result:(FlutterResult)result {
     NSDictionary *ConfigurationInfo = call.arguments;
     // [ GTSdk ]：使用APPID/APPKEY/APPSECRENT启动个推
     [GeTuiSdk startSdkWithAppId:ConfigurationInfo[@"appId"] appKey:ConfigurationInfo[@"appKey"] appSecret:ConfigurationInfo[@"appSecret"] delegate:self];
@@ -83,7 +81,7 @@
             center.delegate = self;
             [center requestAuthorizationWithOptions:(UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionCarPlay) completionHandler:^(BOOL granted, NSError *_Nullable error) {
                 if (!error) {
-                    NSLog(@"request authorization succeeded!");
+                    NSLog(@"GeTui request authorization succeeded!");
                 }
             }];
         } else {
@@ -109,9 +107,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    if (launchOptions != nil) {
+    if (launchOptions != nil)
         _launchNotification = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
-    }
+    
     return YES;
 }
 
@@ -134,7 +132,7 @@
 #pragma mark - APP运行中接收到通知(推送)处理 - iOS 10以下版本收到推送
 
 /** APP已经接收到“远程”通知(推送) - (App运行在后台)  */
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler {
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(BOOL (^)(UIBackgroundFetchResult result))completionHandler {
     
     // [ GTSdk ]：将收到的APNs信息传给个推统计
     [GeTuiSdk handleRemoteNotification:userInfo];
@@ -183,7 +181,7 @@
         NSString* payload = [GeTuiSdk handleApplinkFeedback:webUrl];
         if (payload) {
             NSLog(@"个推APPLink中携带的透传payload信息: %@,URL : %@", payload, webUrl);
-            //TODO:用户可根据具体 payload 进行业务处理
+            //用户可根据具体 payload 进行业务处理
             [_channel invokeMethod:@"onAppLinkPayload" arguments:payload];
         }
     }
@@ -218,9 +216,9 @@
     // 个推VOIP回执统计
     [GeTuiSdk handleVoipNotification:payload.dictionaryPayload];
     
-    // TODO:接受VOIP推送中的payload内容进行具体业务逻辑处理
+    // 接受VOIP推送中的payload内容进行具体业务逻辑处理
     NSLog(@"[Voip Payload]:%@,%@", payload, payload.dictionaryPayload);
-    [_channel invokeMethod:@"onReceiveVoipPayLoad" arguments:payload.dictionaryPayload];
+    [_channel invokeMethod:@"onReceiveVoIpPayLoad" arguments:payload.dictionaryPayload];
 }
 
 #pragma mark - GeTuiSdkDelegate
@@ -229,9 +227,7 @@
 - (void)GeTuiSdkDidRegisterClient:(NSString *)clientId {
     // [ GTSdk ]：个推SDK已注册，返回clientId
     NSLog(@">>[GTSdk RegisterClient]:%@", clientId);
-    if ([clientId isEqualToString:@""]) {
-        return;
-    }
+    if ([clientId isEqualToString:@""]) return;
     
     [_channel invokeMethod:@"onReceiveClientId" arguments:clientId];
 }
@@ -285,12 +281,12 @@
 
 - (NSString *)getHexStringForData:(NSData *)data {
     NSUInteger len = [data length];
-        char *chars = (char *) [data bytes];
-        NSMutableString *hexString = [[NSMutableString alloc] init];
-        for (NSUInteger i = 0; i < len; i++) {
-            [hexString appendString:[NSString stringWithFormat:@"%0.2hhx", chars[i]]];
-        }
-        return hexString;
+    char *chars = (char *) [data bytes];
+    NSMutableString *hexString = [[NSMutableString alloc] init];
+    for (NSUInteger i = 0; i < len; i++) {
+        [hexString appendString:[NSString stringWithFormat:@"%0.2hhx", chars[i]]];
+    }
+    return hexString;
 }
 
 @end
