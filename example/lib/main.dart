@@ -33,11 +33,11 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     ///初始化
-    initGeTuiSdk(
+    initWithGeTui(
         appId: 'cy0d7CICux7YKvteM5cy87',
         appKey: 'DGb52WTbzf8QX2Joji9bJ5',
         appSecret: 'ZpUhvjyrGv8d24tFCa4y95');
-    initGeTuiSdk(
+    initWithGeTui(
         appId: 'FnFp1rNm2Z5TSclnkeK9H9',
         appKey: 'FSqM3ZNYSO6QsWiaIJgXo4',
         appSecret: 'fDJ8QwfGTJ6wLgGQeoiHM5');
@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> initPlatformState() async {
-    addGeTuiEventHandler(
+    addEventHandlerWithGeTui(
       onReceiveClientId: (String message) async {
         print('flutter onReceiveClientId: $message');
         getClientId = message;
@@ -117,20 +117,21 @@ class _HomePageState extends State<HomePage> {
           Wrap(runSpacing: 10, spacing: 10, children: <Widget>[
             RaisedButton(
                 onPressed: () async {
-                  final String getClientId = await getGeTuiClientId;
+                  final String getClientId = await getClientIdWithGeTui;
                   print(getClientId);
                 },
                 child: const Text('getClientId')),
             RaisedButton(
-                onPressed: () => startGeTuiPush,
+                onPressed: () => startPushWithGeTui,
                 child: const Text('start push')),
             RaisedButton(
-                onPressed: () => stopGeTuiPush, child: const Text('stop push')),
+                onPressed: () => stopPushWithGeTui,
+                child: const Text('stop push')),
             RaisedButton(
-                onPressed: () => bindGeTuiAlias('test', ''),
+                onPressed: () => bindAliasWithGeTui('test', ''),
                 child: const Text('bindAlias')),
             RaisedButton(
-                onPressed: () => unbindGeTuiAlias('test', '', true),
+                onPressed: () => unbindAliasWithGeTui('test', '', true),
                 child: const Text('unbindAlias')),
             RaisedButton(
                 onPressed: () {
@@ -152,16 +153,16 @@ class _HomePageState extends State<HomePage> {
                 onPressed: getLaunchNotification,
                 child: const Text('getLaunchNotification')),
             RaisedButton(
-                onPressed: () => setGeTuiBadge(5),
+                onPressed: () => setBadgeWithGeTui(5),
                 child: const Text('setBadge')),
             RaisedButton(
-                onPressed: () => resetGeTuiBadge,
+                onPressed: () => resetBadgeWithGeTui,
                 child: const Text('resetBadge')),
             RaisedButton(
-                onPressed: () => setGeTuiLocalBadge(5),
+                onPressed: () => setLocalBadgeWithGeTui(5),
                 child: const Text('setLocalBadge(5)')),
             RaisedButton(
-                onPressed: () => setGeTuiLocalBadge(0),
+                onPressed: () => setLocalBadgeWithGeTui(0),
                 child: const Text('setLocalBadge(0)'))
           ]),
           Text('DeviceToken: $getDeviceToken'),
