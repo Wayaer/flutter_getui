@@ -2,11 +2,8 @@ package flutter.getui
 
 import android.content.Context
 import com.igexin.sdk.PushManager
-import com.igexin.sdk.PushService
 import com.igexin.sdk.Tag
 import io.flutter.embedding.engine.plugins.FlutterPlugin
-import io.flutter.embedding.engine.plugins.activity.ActivityAware
-import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -35,8 +32,7 @@ class GeTuiPlugin : FlutterPlugin, MethodCallHandler {
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "initPush" -> {
-                PushManager.getInstance().initialize(context, GTPushService::class.java)
-                PushManager.getInstance().registerPushIntentService(context, IntentService::class.java)
+                PushManager.getInstance().initialize(context)
             }
             "getClientId" -> result.success(PushManager.getInstance().getClientid(context))
             "startPush" -> PushManager.getInstance().turnOnPush(context)

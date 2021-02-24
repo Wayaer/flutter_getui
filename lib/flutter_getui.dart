@@ -84,24 +84,26 @@ Future<void> setLocalBadgeWithGeTui(int badge) async {
 void setGeTuiTag(List<dynamic> tags) =>
     _channel.invokeMethod<dynamic>('setTag', <String, dynamic>{'tags': tags});
 
-void addEventHandlerWithGeTui({
+void addHandlerWithGeTui({
   /// 注册收到 cid 的回调
   EventHandler onReceiveClientId,
-  EventHandlerMap onReceiveMessageData,
   EventHandlerBool onReceiveOnlineState,
   EventHandlerMap onNotificationMessageArrived,
   EventHandlerMap onNotificationMessageClicked,
 
-  /// deviceToken
+  /// android 透传消息
+  EventHandlerMap onReceiveMessageData,
+
+  /// ios deviceToken
   EventHandler onRegisterDeviceToken,
 
-  /// voIpToken
+  /// ios voIpToken
   EventHandler onRegisterVoIpToken,
 
   /// ios 收到的透传内容
   EventHandlerMap onReceivePayload,
 
-  /// ios 收到APNS消息
+  /// ios 收到APNS消息 点击通知
   EventHandlerMap onReceiveNotificationResponse,
 
   /// ios 收到AppLink消息
@@ -121,31 +123,43 @@ void addEventHandlerWithGeTui({
           return onReceiveOnlineState(call.arguments as bool);
         break;
       case 'onReceiveMessageData':
-        final Map<String, dynamic> map = call.arguments as Map<String, dynamic>;
-        if (onReceiveMessageData != null) return onReceiveMessageData(map);
+        if (onReceiveMessageData != null) {
+          final Map<String, dynamic> map =
+              call.arguments as Map<String, dynamic>;
+          return onReceiveMessageData(map);
+        }
         break;
       case 'onNotificationMessageArrived':
-        final Map<String, dynamic> map = call.arguments as Map<String, dynamic>;
-        if (onNotificationMessageArrived != null)
+        if (onNotificationMessageArrived != null) {
+          final Map<String, dynamic> map =
+              call.arguments as Map<String, dynamic>;
           return onNotificationMessageArrived(map);
+        }
         break;
       case 'onNotificationMessageClicked':
-        final Map<String, dynamic> map = call.arguments as Map<String, dynamic>;
-        if (onNotificationMessageClicked != null)
+        if (onNotificationMessageClicked != null) {
+          final Map<String, dynamic> map =
+              call.arguments as Map<String, dynamic>;
           return onNotificationMessageClicked(map);
+        }
         break;
       case 'onRegisterDeviceToken':
         if (onRegisterDeviceToken != null)
           return onRegisterDeviceToken(call.arguments.toString());
         break;
       case 'onReceivePayload':
-        final Map<String, dynamic> map = call.arguments as Map<String, dynamic>;
-        if (onReceivePayload != null) return onReceivePayload(map);
+        if (onReceivePayload != null) {
+          final Map<String, dynamic> map =
+              call.arguments as Map<String, dynamic>;
+          return onReceivePayload(map);
+        }
         break;
       case 'onReceiveNotificationResponse':
-        final Map<String, dynamic> map = call.arguments as Map<String, dynamic>;
-        if (onReceiveNotificationResponse != null)
+        if (onReceiveNotificationResponse != null) {
+          final Map<String, dynamic> map =
+              call.arguments as Map<String, dynamic>;
           return onReceiveNotificationResponse(map);
+        }
         break;
       case 'onAppLinkPayload':
         if (onAppLinkPayload != null)
@@ -156,8 +170,11 @@ void addEventHandlerWithGeTui({
           return onRegisterVoIpToken(call.arguments.toString());
         break;
       case 'onReceiveVoIpPayLoad':
-        final Map<String, dynamic> map = call.arguments as Map<String, dynamic>;
-        if (onReceiveVoIpPayLoad != null) return onReceiveVoIpPayLoad(map);
+        if (onReceiveVoIpPayLoad != null) {
+          final Map<String, dynamic> map =
+              call.arguments as Map<String, dynamic>;
+          return onReceiveVoIpPayLoad(map);
+        }
         break;
       default:
         throw UnsupportedError('Unrecognized Event');

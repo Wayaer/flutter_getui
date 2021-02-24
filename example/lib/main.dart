@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> initPlatformState() async {
-    addEventHandlerWithGeTui(
+    addHandlerWithGeTui(
       onReceiveClientId: (String message) async {
         print('flutter onReceiveClientId: $message');
         getClientId = message;

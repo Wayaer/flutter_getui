@@ -50,16 +50,13 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
-    buildTypes {
-        release {
-            consumerProguardFiles "proguard-rules.pro"
-        }
-    }
+
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.getui:sdk-for-google-play:4.3.5.13'
+    implementation 'com.getui:gtsdk:3.1.2.0'  //个推SDK
+    implementation 'com.getui:gtc:3.1.0.0'
+
     implementation('com.getui:hwp-v4:2.0.0') {
         exclude group: 'com.getui', module: 'sdk'
     }

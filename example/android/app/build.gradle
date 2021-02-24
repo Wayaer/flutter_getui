@@ -52,10 +52,8 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         manifestPlaceholders = [
-                GETUI_APP_ID    : "cy0d7CICux7YKvteM5cy87",
-                GETUI_APP_KEY   : "DGb52WTbzf8QX2Joji9bJ5",
-                GETUI_APP_SECRET: "ZpUhvjyrGv8d24tFCa4y95",
-                XIAOMI_APP_ID   : "",
+                GETUI_APPID     : "cy0d7CICux7YKvteM5cy87",
+                XIAOMI_APP_ID    : "",
                 XIAOMI_APP_KEY  : "",
                 MEIZU_APP_ID    : "",
                 MEIZU_APP_KEY   : "",
