@@ -37,10 +37,7 @@ class _HomePageState extends State<HomePage> {
         appId: 'cy0d7CICux7YKvteM5cy87',
         appKey: 'DGb52WTbzf8QX2Joji9bJ5',
         appSecret: 'ZpUhvjyrGv8d24tFCa4y95');
-    initWithGeTui(
-        appId: 'FnFp1rNm2Z5TSclnkeK9H9',
-        appKey: 'FSqM3ZNYSO6QsWiaIJgXo4',
-        appSecret: 'fDJ8QwfGTJ6wLgGQeoiHM5');
+
     WidgetsBinding.instance
         .addPostFrameCallback((Duration timeStamp) => initPlatformState());
   }

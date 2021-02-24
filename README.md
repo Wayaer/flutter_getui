@@ -22,7 +22,7 @@ android: {
     applicationId ""
     
     manifestPlaceholders = [
-    	GETUI_APP_ID    : "USER_APP_ID",
+    	GETUI_APPID    : "USER_APP_ID",
     	GETUI_APP_KEY   : "USER_APP_KEY",
     	GETUI_APP_SECRET: "USER_APP_SECRET",
         // 下面是多厂商配置，如需要开通使用请联系技术支持
@@ -106,91 +106,69 @@ signingConfigs {
 ```
 
 
-
 ### 使用
 ```dart
 import 'package:getuiflut/flutter_ge_tui.dart';
 
 ```
 
-​	
-### iOS:
+### 初始化个推sdk
 
-初始化个推sdk
 ```
-   Getuiflut().initSdk(
-      appId: "8eLAkGIYnGAwA9fVYZU93A",
-      appKey: "VFX8xYxvVF6w59tsvY6XN",
-      appSecret: "Kv3TeED8z19QwnMLdzdI35"
-   );
-    
-```
-### Android API
-
-初始化个推sdk
-	
-```
-   Getuiflut().initSdk();
+     initWithGeTui(
+         appId: 'cy0d7CICux7YKvteM5cy87',
+         appKey: 'DGb52WTbzf8QX2Joji9bJ5',
+         appSecret: 'ZpUhvjyrGv8d24tFCa4y95');
     
 ```
 
 ### 公用 API
-```
-/**
-	* 绑定别名功能:后台可以根据别名进行推送
-	*
-	* @param alias 别名字符串
-	* @param aSn   绑定序列码, Android中无效，仅在iOS有效
-	*/
+```dart
+///  绑定别名功能:后台可以根据别名进行推送
+///  @param alias 别名字符串
+///  @param aSn   绑定序列码, Android中无效，仅在iOS有效
+
 bindAlias(alias, sn);
+
 unbindAlias(alias, sn);
 
-/**
-  *  给用户打标签 , 后台可以根据标签进行推送
-  *
-  *  @param tags 别名数组
-  */
-setTag(tags);
+/// 给用户打标签 , 后台可以根据标签进行推送
+/// @param tags 别名数组
 
-/**
-  *  停止SDK服务
-  *
-  */
-turnOffPush();
+setGeTuiTag(tags);
 
-/**
-  *  开启SDK服务
-  *
-  */
-turnOnPush();
+```
+### Android APi
+```dart
+///  停止SDK服务
+
+stopPushWithGeTui();
+
+///  开启SDK服务
+startPushWithGeTui();
+
 ```
 
 ### iOS API
-```
-/**
-  *  同步服务端角标
-    *
-    */
-setBadge(badge);
 
-/**
-  *  复位服务端角标
-    *
-    */
-resetBadge();
+```dart
+///  同步服务端角标
 
-/**
-  *  同步App本地角标
-    *
-    */
-setLocalBadge(badge); 
+setBadgeWithGeTui(badge);
+
+///  复位服务端角标
+
+resetBadgeWithGeTui();
+
+///  同步App本地角标
+
+setLocalBadgeWithGeTui(badge); 
 
 
-/**
-  *  获取冷启动Apns参数
-    *
-    */
-getLaunchNotification();
+///  获取冷启动Apns参数
+
+getGeTuiLaunchNotification();
 
 ```
+
 
