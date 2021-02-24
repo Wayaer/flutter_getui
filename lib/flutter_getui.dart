@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 
 typedef EventHandler = void Function(String res);
 typedef EventHandlerBool = void Function(bool online);
-typedef EventHandlerMap = void Function(Map<String, dynamic> event);
+typedef EventHandlerMap = void Function(Map<dynamic, dynamic> event);
 
 const MethodChannel _channel = MethodChannel('get_tui');
 
@@ -125,13 +125,12 @@ void addHandlerWithGeTui({
   _channel.setMethodCallHandler((MethodCall call) async {
     switch (call.method) {
       case 'onReceiveClientId':
-        if (onReceiveClientId != null)
-          return onReceiveClientId(call.arguments.toString());
-        break;
+        if (onReceiveClientId == null) return;
+        return onReceiveClientId(call.arguments.toString());
+
       case 'onReceiveOnlineState':
-        if (onReceiveOnlineState != null)
-          return onReceiveOnlineState(call.arguments as bool);
-        break;
+        if (onReceiveOnlineState == null) return;
+        return onReceiveOnlineState(call.arguments as bool);
       case 'onReceiveMessageData':
         if (onReceiveMessageData != null) {
           final Map<String, dynamic> map =
@@ -140,52 +139,41 @@ void addHandlerWithGeTui({
         }
         break;
       case 'onNotificationMessageArrived':
-        if (onNotificationMessageArrived != null) {
-          final Map<String, dynamic> map =
-              call.arguments as Map<String, dynamic>;
-          return onNotificationMessageArrived(map);
-        }
-        break;
+        if (onNotificationMessageArrived == null) return;
+        final Map<String, dynamic> map = call.arguments as Map<String, dynamic>;
+        return onNotificationMessageArrived(map);
+
       case 'onNotificationMessageClicked':
-        if (onNotificationMessageClicked != null) {
-          final Map<String, dynamic> map =
-              call.arguments as Map<String, dynamic>;
-          return onNotificationMessageClicked(map);
-        }
-        break;
+        if (onNotificationMessageClicked == null) return;
+        final Map<String, dynamic> map = call.arguments as Map<String, dynamic>;
+        return onNotificationMessageClicked(map);
+
       case 'onRegisterDeviceToken':
-        if (onRegisterDeviceToken != null)
-          return onRegisterDeviceToken(call.arguments.toString());
-        break;
+        if (onRegisterDeviceToken == null) return;
+        return onRegisterDeviceToken(call.arguments.toString());
+
       case 'onReceivePayload':
-        if (onReceivePayload != null) {
-          final Map<String, dynamic> map =
-              call.arguments as Map<String, dynamic>;
-          return onReceivePayload(map);
-        }
-        break;
+        if (onReceivePayload == null) return;
+        final Map<String, dynamic> map = call.arguments as Map<String, dynamic>;
+        return onReceivePayload(map);
+
       case 'onReceiveNotificationResponse':
-        if (onReceiveNotificationResponse != null) {
-          final Map<String, dynamic> map =
-              call.arguments as Map<String, dynamic>;
-          return onReceiveNotificationResponse(map);
-        }
-        break;
+        if (onReceiveNotificationResponse == null) return;
+        final Map<String, dynamic> map = call.arguments as Map<String, dynamic>;
+        return onReceiveNotificationResponse(map);
+
       case 'onAppLinkPayload':
-        if (onAppLinkPayload != null)
-          return onAppLinkPayload(call.arguments.toString());
-        break;
+        if (onAppLinkPayload == null) return;
+        return onAppLinkPayload(call.arguments.toString());
+
       case 'onRegisterVoIpToken':
-        if (onRegisterVoIpToken != null)
-          return onRegisterVoIpToken(call.arguments.toString());
-        break;
+        if (onRegisterVoIpToken == null) return;
+        return onRegisterVoIpToken(call.arguments.toString());
+
       case 'onReceiveVoIpPayLoad':
-        if (onReceiveVoIpPayLoad != null) {
-          final Map<String, dynamic> map =
-              call.arguments as Map<String, dynamic>;
-          return onReceiveVoIpPayLoad(map);
-        }
-        break;
+        if (onReceiveVoIpPayLoad == null) return;
+        final Map<String, dynamic> map = call.arguments as Map<String, dynamic>;
+        return onReceiveVoIpPayLoad(map);
       default:
         throw UnsupportedError('Unrecognized Event');
     }

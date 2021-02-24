@@ -52,17 +52,17 @@ class _HomePageState extends State<HomePage> {
       onReceiveOnlineState: (bool state) {
         print('flutter onReceiveOnlineState: $state');
       },
-      onReceiveMessageData: (Map<String, dynamic> msg) async {
+      onReceiveMessageData: (Map<dynamic, dynamic> msg) async {
         print('flutter onReceiveMessageData: $msg');
         payloadInfo = msg['payload'].toString();
         setState(() {});
       },
-      onNotificationMessageArrived: (Map<String, dynamic> msg) async {
+      onNotificationMessageArrived: (Map<dynamic, dynamic> msg) async {
         print('flutter onNotificationMessageArrived');
         notificationState = 'Arrived';
         setState(() {});
       },
-      onNotificationMessageClicked: (Map<String, dynamic> msg) async {
+      onNotificationMessageClicked: (Map<dynamic, dynamic> msg) async {
         print('flutter onNotificationMessageClicked');
         notificationState = 'Clicked';
         setState(() {});
@@ -72,12 +72,12 @@ class _HomePageState extends State<HomePage> {
         getDeviceToken = message;
         setState(() {});
       },
-      onReceivePayload: (Map<String, dynamic> message) {
+      onReceivePayload: (Map<dynamic, dynamic> message) {
         print('flutter onReceivePayload: $message');
         onReceivePayload = message.toString();
         setState(() {});
       },
-      onReceiveNotificationResponse: (Map<String, dynamic> message) {
+      onReceiveNotificationResponse: (Map<dynamic, dynamic> message) {
         print('flutter onReceiveNotificationResponse: $message');
         onReceiveNotificationResponse = '$message';
         setState(() {});
@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> {
         getVoIpToken = message;
         setState(() {});
       },
-      onReceiveVoIpPayLoad: (Map<String, dynamic> message) {
+      onReceiveVoIpPayLoad: (Map<dynamic, dynamic> message) {
         onReceiveVoIpPayLoad = message.toString();
         setState(() {});
       },
