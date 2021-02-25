@@ -26,7 +26,7 @@ Future<void> initWithGeTui(
   }
 }
 
-///获取 clientId
+/// 获取 clientId
 Future<String> get getClientIdWithGeTui => _channel.invokeMethod('getClientId');
 
 /// 开启推送 only android

@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    ///初始化
+    /// 初始化
     initWithGeTui(
         appId: 'cy0d7CICux7YKvteM5cy87',
         appKey: 'DGb52WTbzf8QX2Joji9bJ5',
