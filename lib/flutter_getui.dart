@@ -11,7 +11,7 @@ const MethodChannel _channel = MethodChannel('get_tui');
 
 /// 初始化sdk
 Future<void> initWithGeTui(
-    {String appId, String appKey, String appSecret}) async {
+    {String? appId, String? appKey, String? appSecret}) async {
   if (Platform.isAndroid) {
     return await _channel.invokeMethod<dynamic>('initPush');
   } else {
@@ -27,7 +27,8 @@ Future<void> initWithGeTui(
 }
 
 /// 获取 clientId
-Future<String> get getClientIdWithGeTui => _channel.invokeMethod('getClientId');
+Future<String?> get getClientIdWithGeTui =>
+    _channel.invokeMethod('getClientId');
 
 /// 开启推送 only android
 Future<void> get startPushWithGeTui async {
@@ -79,7 +80,7 @@ Future<void> setLocalBadgeWithGeTui(int badge) async {
 }
 
 /// only ios
-Future<Map<dynamic, dynamic>> get getGeTuiLaunchNotification async {
+Future<Map<dynamic, dynamic>?> get getGeTuiLaunchNotification async {
   if (Platform.isIOS)
     return await _channel.invokeMethod('getLaunchNotification');
   return null;
@@ -90,44 +91,43 @@ void setGeTuiTag(List<dynamic> tags) =>
 
 void addHandlerWithGeTui({
   /// 注册收到 cid 的回调
-  EventHandler onReceiveClientId,
+  EventHandler? onReceiveClientId,
 
   /// android 在线状态
-  EventHandlerBool onReceiveOnlineState,
+  EventHandlerBool? onReceiveOnlineState,
 
   /// android 收到消息回调
-  EventHandlerMap onNotificationMessageArrived,
+  EventHandlerMap? onNotificationMessageArrived,
 
   /// android 点击消息回调
-  EventHandlerMap onNotificationMessageClicked,
+  EventHandlerMap? onNotificationMessageClicked,
 
   /// android 透传消息
-  EventHandlerMap onReceiveMessageData,
+  EventHandlerMap? onReceiveMessageData,
 
   /// ios deviceToken
-  EventHandler onRegisterDeviceToken,
+  EventHandler? onRegisterDeviceToken,
 
   /// ios voIpToken
-  EventHandler onRegisterVoIpToken,
+  EventHandler? onRegisterVoIpToken,
 
   /// ios 收到的透传内容
-  EventHandlerMap onReceivePayload,
+  EventHandlerMap? onReceivePayload,
 
   /// ios 收到APNS消息 点击通知
-  EventHandlerMap onReceiveNotificationResponse,
+  EventHandlerMap? onReceiveNotificationResponse,
 
   /// ios 收到AppLink消息
-  EventHandler onAppLinkPayload,
+  EventHandler? onAppLinkPayload,
 
   /// ios 收到VoIP消息
-  EventHandlerMap onReceiveVoIpPayLoad,
+  EventHandlerMap? onReceiveVoIpPayLoad,
 }) {
   _channel.setMethodCallHandler((MethodCall call) async {
     switch (call.method) {
       case 'onReceiveClientId':
         if (onReceiveClientId == null) return;
         return onReceiveClientId(call.arguments.toString());
-
       case 'onReceiveOnlineState':
         if (onReceiveOnlineState == null) return;
         return onReceiveOnlineState(call.arguments as bool);

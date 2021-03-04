@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
   String onReceivePayload = '';
   String onReceiveNotificationResponse = '';
   String onAppLinkPayLoad = '';
-  String onReceiveVoIpPayLoad;
+  late String onReceiveVoIpPayLoad;
 
   @override
   void initState() {
@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
         appKey: 'DGb52WTbzf8QX2Joji9bJ5',
         appSecret: 'ZpUhvjyrGv8d24tFCa4y95');
 
-    WidgetsBinding.instance
+    WidgetsBinding.instance!
         .addPostFrameCallback((Duration timeStamp) => initPlatformState());
   }
 
@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getLaunchNotification() async {
-    final Map<dynamic, dynamic> info = await getGeTuiLaunchNotification;
+    final Map<dynamic, dynamic> info = (await getGeTuiLaunchNotification)!;
     print(info);
   }
 
@@ -112,25 +112,25 @@ class _HomePageState extends State<HomePage> {
           const Text('SDK Public Function',
               style: TextStyle(color: Colors.lightBlue, fontSize: 18.0)),
           Wrap(runSpacing: 10, spacing: 10, children: <Widget>[
-            RaisedButton(
+            ElevatedButton(
                 onPressed: () async {
-                  final String getClientId = await getClientIdWithGeTui;
+                  final String getClientId = (await getClientIdWithGeTui)!;
                   print(getClientId);
                 },
                 child: const Text('getClientId')),
-            RaisedButton(
+            ElevatedButton(
                 onPressed: () => startPushWithGeTui,
                 child: const Text('start push')),
-            RaisedButton(
+            ElevatedButton(
                 onPressed: () => stopPushWithGeTui,
                 child: const Text('stop push')),
-            RaisedButton(
+            ElevatedButton(
                 onPressed: () => bindAliasWithGeTui('test', ''),
                 child: const Text('bindAlias')),
-            RaisedButton(
+            ElevatedButton(
                 onPressed: () => unbindAliasWithGeTui('test', '', true),
                 child: const Text('unbindAlias')),
-            RaisedButton(
+            ElevatedButton(
                 onPressed: () {
                   final List<String> test = <String>[];
                   test.add('abc');
@@ -146,19 +146,19 @@ class _HomePageState extends State<HomePage> {
           const Text('ios Public Function',
               style: TextStyle(color: Colors.lightBlue, fontSize: 18.0)),
           Wrap(runSpacing: 10, spacing: 10, children: <Widget>[
-            RaisedButton(
+            ElevatedButton(
                 onPressed: getLaunchNotification,
                 child: const Text('getLaunchNotification')),
-            RaisedButton(
+            ElevatedButton(
                 onPressed: () => setBadgeWithGeTui(5),
                 child: const Text('setBadge')),
-            RaisedButton(
+            ElevatedButton(
                 onPressed: () => resetBadgeWithGeTui,
                 child: const Text('resetBadge')),
-            RaisedButton(
+            ElevatedButton(
                 onPressed: () => setLocalBadgeWithGeTui(5),
                 child: const Text('setLocalBadge(5)')),
-            RaisedButton(
+            ElevatedButton(
                 onPressed: () => setLocalBadgeWithGeTui(0),
                 child: const Text('setLocalBadge(0)'))
           ]),
