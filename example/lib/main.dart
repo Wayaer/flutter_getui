@@ -10,7 +10,8 @@ Future<void> main() async {
       appKey: 'DGb52WTbzf8QX2Joji9bJ5',
       appSecret: 'ZpUhvjyrGv8d24tFCa4y95');
 
-  runApp(MaterialApp(title: '个推', home: HomePage()));
+  runApp(MaterialApp(
+      debugShowCheckedModeBanner: false, title: '个推', home: HomePage()));
 }
 
 class HomePage extends StatefulWidget {
@@ -27,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   String onReceivePayload = '';
   String onReceiveNotificationResponse = '';
   String onAppLinkPayLoad = '';
-  late String onReceiveVoIpPayLoad;
+  String? onReceiveVoIpPayLoad;
 
   @override
   void initState() {
