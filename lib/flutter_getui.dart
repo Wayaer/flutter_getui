@@ -14,7 +14,7 @@ Future<void> initWithGeTui(
     {String? appId, String? appKey, String? appSecret}) async {
   if (Platform.isAndroid) {
     return await _channel.invokeMethod<dynamic>('initPush');
-  } else {
+  } else if (Platform.isIOS) {
     assert(appId != null);
     assert(appKey != null);
     assert(appSecret != null);

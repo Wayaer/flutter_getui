@@ -114,60 +114,61 @@ import 'package:getuiflut/flutter_ge_tui.dart';
 
 ### 初始化个推sdk
 
-```
+```dart
+   void main(){
      initWithGeTui(
          appId: 'cy0d7CICux7YKvteM5cy87',
          appKey: 'DGb52WTbzf8QX2Joji9bJ5',
          appSecret: 'ZpUhvjyrGv8d24tFCa4y95');
-    
+    }
 ```
 
 ### 公用 API
 ```dart
-///  绑定别名功能:后台可以根据别名进行推送
-///  @param alias 别名字符串
-///  @param aSn   绑定序列码, Android中无效，仅在iOS有效
+    ///  绑定别名功能:后台可以根据别名进行推送
+    ///  @param alias 别名字符串
+    ///  @param aSn   绑定序列码, Android中无效，仅在iOS有效
 
-bindAlias(alias, sn);
+    bindAlias(alias, sn);
 
-unbindAlias(alias, sn);
+    unbindAlias(alias, sn);
 
-/// 给用户打标签 , 后台可以根据标签进行推送
-/// @param tags 别名数组
+    /// 给用户打标签 , 后台可以根据标签进行推送
+    /// @param tags 别名数组
 
-setGeTuiTag(tags);
+    setGeTuiTag(tags);
 
 ```
 ### Android APi
 ```dart
-///  停止SDK服务
+     ///  停止SDK服务
 
-stopPushWithGeTui();
+     stopPushWithGeTui();
 
-///  开启SDK服务
-startPushWithGeTui();
+     ///  开启SDK服务
+     startPushWithGeTui();
 
 ```
 
 ### iOS API
 
 ```dart
-///  同步服务端角标
+     ///  同步服务端角标
 
-setBadgeWithGeTui(badge);
+     setBadgeWithGeTui(badge);
 
-///  复位服务端角标
+     ///  复位服务端角标
 
-resetBadgeWithGeTui();
+     resetBadgeWithGeTui();
 
-///  同步App本地角标
+      ///  同步App本地角标
+ 
+     setLocalBadgeWithGeTui(badge); 
 
-setLocalBadgeWithGeTui(badge); 
 
+      ///  获取冷启动Apns参数
 
-///  获取冷启动Apns参数
-
-getGeTuiLaunchNotification();
+     getGeTuiLaunchNotification();
 
 ```
 

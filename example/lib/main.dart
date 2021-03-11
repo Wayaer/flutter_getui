@@ -3,13 +3,14 @@ import 'package:flutter_getui/flutter_getui.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MaterialApp(
-    title: '个推',
-    theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity),
-    home: HomePage(),
-  ));
+
+  /// 初始化
+  initWithGeTui(
+      appId: 'cy0d7CICux7YKvteM5cy87',
+      appKey: 'DGb52WTbzf8QX2Joji9bJ5',
+      appSecret: 'ZpUhvjyrGv8d24tFCa4y95');
+
+  runApp(MaterialApp(title: '个推', home: HomePage()));
 }
 
 class HomePage extends StatefulWidget {
@@ -31,13 +32,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
-    /// 初始化
-    initWithGeTui(
-        appId: 'cy0d7CICux7YKvteM5cy87',
-        appKey: 'DGb52WTbzf8QX2Joji9bJ5',
-        appSecret: 'ZpUhvjyrGv8d24tFCa4y95');
-
     WidgetsBinding.instance!
         .addPostFrameCallback((Duration timeStamp) => initPlatformState());
   }
