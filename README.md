@@ -108,7 +108,7 @@ signingConfigs {
 
 ### 使用
 ```dart
-import 'package:getuiflut/flutter_ge_tui.dart';
+import 'package:flutter_getui/flutter_getui.dart';
 
 ```
 

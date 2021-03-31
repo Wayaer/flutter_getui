@@ -89,6 +89,7 @@ Future<Map<dynamic, dynamic>?> get getGeTuiLaunchNotification async {
 void setGeTuiTag(List<dynamic> tags) =>
     _channel.invokeMethod<dynamic>('setTag', <String, dynamic>{'tags': tags});
 
+/// 消息监听
 void addHandlerWithGeTui({
   /// 注册收到 cid 的回调
   EventHandler? onReceiveClientId,
