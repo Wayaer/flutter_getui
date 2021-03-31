@@ -1,14 +1,5 @@
 # flutter_getui Flutter Plugin
 
-### 引用
-在工程 pubspec.yaml 中加入 dependencies
-```yaml
-
-dependencies:
-  flutter_getui: ^0.0.1
-
-```
-
 ### 配置
 ### Android:
 
