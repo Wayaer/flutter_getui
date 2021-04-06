@@ -37,19 +37,23 @@
         [self registerRemoteNotification];
         [self initSDK:call result:result];
     } else if([@"bindAlias" isEqualToString:call.method]) {
-        [self bindAlias:call result:result];
+        NSDictionary *info = call.arguments;
+        [GeTuiSdk bindAlias:info[@"alias"] andSequenceNum:info[@"aSn"]];
     } else if([@"unbindAlias" isEqualToString:call.method]) {
-        [self unbindAlias:call result:result];
+        NSDictionary *info = call.arguments;
+        [GeTuiSdk unbindAlias:info[@"alias"] andSequenceNum:info[@"aSn"] andIsSelf:info[@"isSelf"]];
     } else if([@"setTag" isEqualToString:call.method]) {
-        [self setTag:call result:result];
+        [GeTuiSdk setTags:call.arguments];
     } else if([@"getClientId" isEqualToString:call.method]) {
         result([GeTuiSdk clientId]);
     } else if([@"setBadge" isEqualToString:call.method]) {
-        [self setBadge:call result:result];
+        NSUInteger value = [call.arguments integerValue];
+        [GeTuiSdk setBadge:value];
     } else if([@"resetBadge" isEqualToString:call.method]) {
         [GeTuiSdk resetBadge];
     } else if([@"setLocalBadge" isEqualToString:call.method]) {
-        [self setLocalBadge:call result:result];
+        NSUInteger value = [call.arguments integerValue];
+        [UIApplication sharedApplication].applicationIconBadgeNumber = value;
     } else if([@"getLaunchNotification" isEqualToString:call.method]) {
         result(_launchNotification ?: @{});
     } else {
@@ -63,18 +67,13 @@
     [GeTuiSdk startSdkWithAppId:ConfigurationInfo[@"appId"] appKey:ConfigurationInfo[@"appKey"] appSecret:ConfigurationInfo[@"appSecret"] delegate:self];
     if (@available(iOS 10.0, *)) {
         [GeTuiSdk registerRemoteNotification:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge)];
-    } else {
-        // Fallback on earlier versions
     }
     // 注册VoipToken
     [self voipRegistration];
 }
 
 - (void)registerRemoteNotification {
-    /*
-     警告：Xcode8的需要手动开启“TARGETS -> Capabilities -> Push Notifications”
-     */
-    
+
     /*
      警告：该方法需要开发者自定义，以下代码根据APP支持的iOS系统不同，代码可以对应修改。
      以下为演示代码，注意根据实际需要修改，注意测试支持的iOS系统都能获取到DeviceToken
@@ -99,11 +98,6 @@
         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
         [[UIApplication sharedApplication] registerForRemoteNotifications];
 #endif
-    } else if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0) {
-        UIUserNotificationType types = (UIUserNotificationTypeAlert | UIUserNotificationTypeSound | UIUserNotificationTypeBadge);
-        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:types categories:nil];
-        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
     }
 }
 
@@ -257,35 +251,7 @@
     [_channel invokeMethod:@"onReceivePayload" arguments:[payloadMsgDic copy]];
 }
 
-#pragma mark - GTSDKfunction
 
-- (void)bindAlias:(FlutterMethodCall*)call result:(FlutterResult)result {
-    NSDictionary *ConfigurationInfo = call.arguments;
-    [GeTuiSdk bindAlias:ConfigurationInfo[@"alias"] andSequenceNum:ConfigurationInfo[@"aSn"]];
-}
-
-- (void)unbindAlias:(FlutterMethodCall*)call result:(FlutterResult)result {
-    NSDictionary *ConfigurationInfo = call.arguments;
-    [GeTuiSdk unbindAlias:ConfigurationInfo[@"alias"] andSequenceNum:ConfigurationInfo[@"aSn"] andIsSelf:ConfigurationInfo[@"isSelf"]];
-}
-
-- (void)setTag:(FlutterMethodCall*)call result:(FlutterResult)result {
-    NSDictionary *ConfigurationInfo = call.arguments;
-    [GeTuiSdk setTags:ConfigurationInfo[@"tags"]];
-}
-
-- (void)setBadge:(FlutterMethodCall*)call result:(FlutterResult)result {
-    NSDictionary *ConfigurationInfo = call.arguments;
-    NSUInteger value = [ConfigurationInfo[@"badge"] integerValue];
-    [GeTuiSdk setBadge:value];
-}
-
-- (void)setLocalBadge:(FlutterMethodCall*)call result:(FlutterResult)result {
-    NSDictionary *ConfigurationInfo = call.arguments;
-    NSUInteger value = [ConfigurationInfo[@"badge"] integerValue];
-    [UIApplication sharedApplication].applicationIconBadgeNumber = value;
-    
-}
 
 #pragma mark - utils
 

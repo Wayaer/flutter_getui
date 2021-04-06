@@ -12,12 +12,12 @@
 
 
     <application
-        android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
+        android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <!-- 用户自定义服务继承自GTIntentService,作为SDK与APP桥梁服务,用来接收各种消息和命令回复 -->
         <service
-            android:name="flutter.getui.IntentService"
+            android:name="flutter.getui.GeTuiPlugin$IntentService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <!-- 配置SDK核心服务 -->
         <service

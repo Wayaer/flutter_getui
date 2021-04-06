@@ -1,11 +1,12 @@
-# flutter_getui Flutter Plugin
+# flutter_getui
 
 ### 配置
-### Android:
 
+### Android:
 #### 1.添加相关配置：
 
 在 `/android/app/build.gradle` 中添加下列代码：
+
 ```groovy
 android: {
  
@@ -13,11 +14,11 @@ android: {
     applicationId ""
     
     manifestPlaceholders = [
-    	GETUI_APPID    : "USER_APP_ID",
-    	GETUI_APP_KEY   : "USER_APP_KEY",
-    	GETUI_APP_SECRET: "USER_APP_SECRET",
-        // 下面是多厂商配置，如需要开通使用请联系技术支持
-        // 如果不需要使用，预留空字段即可
+    	 GETUI_APPID    : "USER_APP_ID",
+    	 GETUI_APP_KEY   : "USER_APP_KEY",
+    	 GETUI_APP_SECRET: "USER_APP_SECRET",
+         // 下面是多厂商配置，如需要开通使用请联系技术支持
+         // 如果不需要使用，预留空字段即可
          XIAOMI_APP_ID   : "",
          XIAOMI_APP_KEY  : "",
          MEIZU_APP_ID    : "",
@@ -107,10 +108,10 @@ import 'package:flutter_getui/flutter_getui.dart';
 
 ```dart
    void main(){
-     initWithGeTui(
-         appId: 'cy0d7CICux7YKvteM5cy87',
-         appKey: 'DGb52WTbzf8QX2Joji9bJ5',
-         appSecret: 'ZpUhvjyrGv8d24tFCa4y95');
+     initGeTui(
+         appId: 'appId',
+         appKey: 'appKey',
+         appSecret: 'appSecret');
     }
 ```
 
@@ -120,9 +121,9 @@ import 'package:flutter_getui/flutter_getui.dart';
     ///  @param alias 别名字符串
     ///  @param aSn   绑定序列码, Android中无效，仅在iOS有效
 
-    bindAlias(alias, sn);
+    bindGeTuiAlias(alias, sn);
 
-    unbindAlias(alias, sn);
+    unbindGeTuiAlias(alias, sn);
 
     /// 给用户打标签 , 后台可以根据标签进行推送
     /// @param tags 别名数组
@@ -134,10 +135,10 @@ import 'package:flutter_getui/flutter_getui.dart';
 ```dart
      ///  停止SDK服务
 
-     stopPushWithGeTui();
+     stopGeTuiPush();
 
      ///  开启SDK服务
-     startPushWithGeTui();
+     startGeTuiPush();
 
 ```
 

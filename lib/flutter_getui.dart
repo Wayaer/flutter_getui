@@ -10,7 +10,7 @@ typedef EventHandlerMap = void Function(Map<dynamic, dynamic> event);
 const MethodChannel _channel = MethodChannel('get_tui');
 
 /// 初始化sdk
-Future<void> initWithGeTui(
+Future<void> initGeTui(
     {String? appId, String? appKey, String? appSecret}) async {
   if (Platform.isAndroid) {
     return await _channel.invokeMethod<dynamic>('initPush');
@@ -27,20 +27,20 @@ Future<void> initWithGeTui(
 }
 
 /// 获取 clientId
-Future<String?> get getClientIdWithGeTui =>
-    _channel.invokeMethod('getClientId');
+Future<String?> getGeTuiClientID() => _channel.invokeMethod('getClientId');
 
 /// 开启推送 only android
-Future<void> get startPushWithGeTui async {
+Future<void> startGeTuiPush() async {
   if (Platform.isAndroid) await _channel.invokeMethod<dynamic>('startPush');
 }
 
 /// 关闭推送 only android
-Future<void> get stopPushWithGeTui async {
+Future<void> stopGeTuiPush() async {
   if (Platform.isAndroid) await _channel.invokeMethod<dynamic>('stopPush');
 }
 
-Future<void> bindAliasWithGeTui(String alias, String sn) async {
+/// 绑定 Alias
+Future<void> bindGeTuiAlias(String alias, String sn) async {
   if (Platform.isAndroid) {
     await _channel
         .invokeMethod<dynamic>('bindAlias', <String, dynamic>{'alias': alias});
@@ -50,7 +50,8 @@ Future<void> bindAliasWithGeTui(String alias, String sn) async {
   }
 }
 
-Future<void> unbindAliasWithGeTui(String alias, String sn, bool isSelf) async {
+/// 解绑 Alias
+Future<void> unbindGeTuiAlias(String alias, String sn, bool isSelf) async {
   if (Platform.isAndroid) {
     await _channel.invokeMethod<dynamic>(
         'unbindAlias', <String, dynamic>{'alias': alias});
@@ -61,10 +62,8 @@ Future<void> unbindAliasWithGeTui(String alias, String sn, bool isSelf) async {
 }
 
 /// only ios
-Future<void> setBadgeWithGeTui(int badge) async {
-  if (Platform.isIOS)
-    await _channel
-        .invokeMethod<dynamic>('setBadge', <String, dynamic>{'badge': badge});
+Future<void> setGeTuiBadge(int badge) async {
+  if (Platform.isIOS) await _channel.invokeMethod<dynamic>('setBadge', badge);
 }
 
 /// only ios
@@ -75,22 +74,21 @@ Future<void> get resetBadgeWithGeTui async {
 /// only ios
 Future<void> setLocalBadgeWithGeTui(int badge) async {
   if (Platform.isIOS)
-    await _channel.invokeMethod<dynamic>(
-        'setLocalBadge', <String, dynamic>{'badge': badge});
+    await _channel.invokeMethod<dynamic>('setLocalBadge', badge);
 }
 
 /// only ios
-Future<Map<dynamic, dynamic>?> get getGeTuiLaunchNotification async {
+Future<Map<dynamic, dynamic>?> getGeTuiLaunchNotification() async {
   if (Platform.isIOS)
     return await _channel.invokeMethod('getLaunchNotification');
   return null;
 }
 
-void setGeTuiTag(List<dynamic> tags) =>
+void setGeTuiTag(List<String> tags) =>
     _channel.invokeMethod<dynamic>('setTag', <String, dynamic>{'tags': tags});
 
 /// 消息监听
-void addHandlerWithGeTui({
+void addGeTuiEventHandler({
   /// 注册收到 cid 的回调
   EventHandler? onReceiveClientId,
 
