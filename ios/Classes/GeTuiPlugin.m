@@ -34,16 +34,20 @@
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if([@"initSDK" isEqualToString:call.method]) {
-        [self registerRemoteNotification];
         [self initSDK:call result:result];
-    } else if([@"bindAlias" isEqualToString:call.method]) {
+    } else if([@"voipRegistration" isEqualToString:call.method]) {
+        [self voipRegistration];
+    } else  if([@"bindAlias" isEqualToString:call.method]) {
         NSDictionary *info = call.arguments;
         [GeTuiSdk bindAlias:info[@"alias"] andSequenceNum:info[@"aSn"]];
+        result([NSNumber numberWithBool:YES]);
     } else if([@"unbindAlias" isEqualToString:call.method]) {
         NSDictionary *info = call.arguments;
-        [GeTuiSdk unbindAlias:info[@"alias"] andSequenceNum:info[@"aSn"] andIsSelf:info[@"isSelf"]];
+        BOOL isSelf= [info[@"isSelf"] boolValue];
+        [GeTuiSdk unbindAlias:info[@"alias"] andSequenceNum:info[@"aSn"] andIsSelf:isSelf];
+        result([NSNumber numberWithBool:YES]);
     } else if([@"setTag" isEqualToString:call.method]) {
-        [GeTuiSdk setTags:call.arguments];
+        result([NSNumber numberWithBool:[GeTuiSdk setTags:call.arguments]]);
     } else if([@"getClientId" isEqualToString:call.method]) {
         result([GeTuiSdk clientId]);
     } else if([@"setBadge" isEqualToString:call.method]) {
@@ -67,39 +71,40 @@
     [GeTuiSdk startSdkWithAppId:ConfigurationInfo[@"appId"] appKey:ConfigurationInfo[@"appKey"] appSecret:ConfigurationInfo[@"appSecret"] delegate:self];
     if (@available(iOS 10.0, *)) {
         [GeTuiSdk registerRemoteNotification:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge)];
-    }
-    // 注册VoipToken
-    [self voipRegistration];
-}
-
-- (void)registerRemoteNotification {
-
-    /*
-     警告：该方法需要开发者自定义，以下代码根据APP支持的iOS系统不同，代码可以对应修改。
-     以下为演示代码，注意根据实际需要修改，注意测试支持的iOS系统都能获取到DeviceToken
-     */
-    if ([[UIDevice currentDevice].systemVersion floatValue] >= 10.0) {
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0 // Xcode 8编译会调用
-        if (@available(iOS 10.0, *)) {
-            UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-            center.delegate = self;
-            [center requestAuthorizationWithOptions:(UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionCarPlay) completionHandler:^(BOOL granted, NSError *_Nullable error) {
-                //if (!error)//NSLog(@"GeTui request authorization succeeded!");
-                
-            }];
-        } else {
-            // Fallback on earlier versions
-        }
-        
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
-#else // Xcode 7编译会调用
-        UIUserNotificationType types = (UIUserNotificationTypeAlert | UIUserNotificationTypeSound | UIUserNotificationTypeBadge);
-        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:types categories:nil];
-        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
-#endif
+        result([NSNumber numberWithBool:YES]);
+    }else{
+        result([NSNumber numberWithBool:NO]);
     }
 }
+
+//- (void)registerRemoteNotification {
+//
+//    /*
+//     警告：该方法需要开发者自定义，以下代码根据APP支持的iOS系统不同，代码可以对应修改。
+//     以下为演示代码，注意根据实际需要修改，注意测试支持的iOS系统都能获取到DeviceToken
+//     */
+//    if ([[UIDevice currentDevice].systemVersion floatValue] >= 10.0) {
+//#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0 // Xcode 8编译会调用
+//        if (@available(iOS 10.0, *)) {
+//            UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+//            center.delegate = self;
+//            [center requestAuthorizationWithOptions:(UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionCarPlay) completionHandler:^(BOOL granted, NSError *_Nullable error) {
+//                //if (!error)//NSLog(@"GeTui request authorization succeeded!");
+//
+//            }];
+//        } else {
+//            // Fallback on earlier versions
+//        }
+//
+//        [[UIApplication sharedApplication] registerForRemoteNotifications];
+//#else // Xcode 7编译会调用
+//        UIUserNotificationType types = (UIUserNotificationTypeAlert | UIUserNotificationTypeSound | UIUserNotificationTypeBadge);
+//        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:types categories:nil];
+//        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+//        [[UIApplication sharedApplication] registerForRemoteNotifications];
+//#endif
+//    }
+//}
 
 #pragma mark - AppDelegate
 
@@ -116,18 +121,14 @@
 /** 远程通知注册成功委托 */
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     // [3]:向个推服务器注册deviceToken 为了方便开发者，建议使用新方法
-    //    [GeTuiSdk registerDeviceTokenData:deviceToken];
     NSString *token = [self getHexStringForData:deviceToken];
-    //  NSLog(@"\n>>>[DeviceToken(NSString)]: %@\n\n", token);
-    [_channel invokeMethod:@"onRegisterDeviceToken" arguments:token];
+    [_channel invokeMethod:@"onReceiveDeviceToken" arguments:token];
 }
 
 /** 远程通知注册失败委托 */
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
-    // NSLog(@"didFailToRegisterForRemoteNotificationsWithError");
-    [_channel invokeMethod:@"onRegisterDeviceToken" arguments:@"Register Error"];
+    [_channel invokeMethod:@"onReceiveDeviceToken" arguments:@""];
 }
-
 #pragma mark - iOS 10中收到推送消息
 
 /// 通知展示（iOS10及以上版本）
@@ -135,18 +136,19 @@
 /// @param notification notification
 /// @param completionHandler completionHandler
 - (void)GeTuiSdkNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification completionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler  API_AVAILABLE(ios(10.0)){
+    [_channel invokeMethod:@"onNotificationMessageArrived" arguments:notification.request.content.userInfo];
     // [ 参考代码，开发者注意根据实际需求自行修改 ] 根据APP需要，判断是否要提示用户Badge、Sound、Alert等
     //completionHandler(UNNotificationPresentationOptionNone); 若不显示通知，则无法点击通知
     completionHandler(UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert);
 }
 
-/// 点击通知
+/// 收到通知信息
 /// @param userInfo apns通知内容
 /// @param center UNUserNotificationCenter（iOS10及以上版本）
 /// @param response UNNotificationResponse（iOS10及以上版本）
 /// @param completionHandler 用来在后台状态下进行操作（iOS10以下版本）
 - (void)GeTuiSdkDidReceiveNotification:(NSDictionary *)userInfo notificationCenter:(UNUserNotificationCenter *)center response:(UNNotificationResponse *)response fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler  API_AVAILABLE(ios(10.0)){
-    [_channel invokeMethod:@"onReceiveNotificationResponse" arguments:userInfo];
+   [_channel invokeMethod:@"onNotificationMessageClicked" arguments:userInfo];
     // [ GTSdk ]：将收到的APNs信息传给个推统计
     [GeTuiSdk handleRemoteNotification:response.notification.request.content.userInfo];
     if(completionHandler) {
@@ -154,6 +156,7 @@
         completionHandler(UIBackgroundFetchResultNoData);
     }
 }
+
 
 #pragma mark - AppLink
 
@@ -184,8 +187,6 @@
     // Set the push type to VoIP
     if (@available(iOS 9.0, *)) {
         voipRegistry.desiredPushTypes = [NSSet setWithObject:PKPushTypeVoIP];
-    } else {
-        // Fallback on earlier versions
     }
 }
 
@@ -207,48 +208,24 @@
     [GeTuiSdk handleVoipNotification:payload.dictionaryPayload];
     
     // 接受VOIP推送中的payload内容进行具体业务逻辑处理
-    // NSLog(@"[Voip Payload]:%@,%@", payload, payload.dictionaryPayload);
     [_channel invokeMethod:@"onReceiveVoIpPayLoad" arguments:payload.dictionaryPayload];
 }
 
 #pragma mark - GeTuiSdkDelegate
 
-/** SDK启动成功返回cid */
-- (void)GeTuiSdkDidRegisterClient:(NSString *)clientId {
-    // [ GTSdk ]：个推SDK已注册，返回clientId
-    // NSLog(@">>[GTSdk RegisterClient]:%@", clientId);
-    if ([clientId isEqualToString:@""]) return;
-    
-    [_channel invokeMethod:@"onReceiveClientId" arguments:clientId];
-}
 
 /** SDK收到透传消息回调 */
 - (void)GeTuiSdkDidReceiveSlience:(NSDictionary *)userInfo fromGetui:(BOOL)fromGetui offLine:(BOOL)offLine appId:(NSString *)appId taskId:(NSString *)taskId msgId:(NSString *)msgId fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler{
     // [ GTSdk ]：汇报个推自定义事件(反馈透传消息)
     [GeTuiSdk sendFeedbackMessage:90001 andTaskId:taskId andMsgId:msgId];
     // 透传消息不会有alert，需要自己定义
-    NSString * payload = [userInfo objectForKey:@"payload"];
-    NSData * jsonData = [payload dataUsingEncoding:NSUTF8StringEncoding];
-    NSDictionary * payloadDic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:nil];
-    if (@available(iOS 10.0, *)) {
-        UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
-        content.title = [payloadDic objectForKey:@"title"];
-        content.body = [payloadDic objectForKey:@"content"];
-        content.userInfo = payloadDic;
-        content.sound = [UNNotificationSound defaultSound];
-        UNTimeIntervalNotificationTrigger *trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:1 repeats:NO];
-        UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:@"my_notification" content:content trigger:trigger];
-        [[UNUserNotificationCenter currentNotificationCenter] addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
-        }];
-    }
-    
     // 数据转换
-    NSMutableDictionary *payloadMsgDic = [NSMutableDictionary dictionaryWithDictionary:payloadDic];
+    NSMutableDictionary *payloadMsgDic = [NSMutableDictionary dictionaryWithDictionary:userInfo];
     [payloadMsgDic setObject:taskId forKey:@"taskId"];
-    [payloadMsgDic setObject:@(offLine) forKey:@"offLine"];
+    [payloadMsgDic setObject:[NSNumber numberWithBool:offLine] forKey:@"offLine"];
+    [payloadMsgDic setObject:[NSNumber numberWithBool:fromGetui] forKey:@"fromGeTui"];
     [payloadMsgDic setObject:msgId forKey:@"messageId"];
-    //  NSLog(@"%@", payloadMsgDic);
-    [_channel invokeMethod:@"onReceivePayload" arguments:[payloadMsgDic copy]];
+    [_channel invokeMethod:@"onReceiveMessageData" arguments:[payloadMsgDic copy]];
 }
 
 

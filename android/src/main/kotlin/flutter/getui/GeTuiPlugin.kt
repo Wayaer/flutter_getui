@@ -27,25 +27,42 @@ class GeTuiPlugin : FlutterPlugin {
             when (call.method) {
                 "initPush" -> {
                     PushManager.getInstance().initialize(context)
+                    result.success(true)
                 }
+                "checkManifest" -> PushManager.getInstance().checkManifest(context)
                 "getClientId" -> result.success(PushManager.getInstance().getClientid(context))
                 "startPush" -> PushManager.getInstance().turnOnPush(context)
                 "stopPush" -> PushManager.getInstance().turnOffPush(context)
-                "bindAlias" -> PushManager.getInstance().bindAlias(context, call.argument<Any>("alias").toString())
-                "unbindAlias" ->
-                    PushManager.getInstance().unBindAlias(context, call
-                            .argument<Any>("alias").toString(), false)
+                "isPushTurnedOn" -> result.success(PushManager.getInstance().isPushTurnedOn(context))
+                "bindAlias" -> {
+                    val status = PushManager.getInstance().bindAlias(context,
+                            call.argument("alias"), call.argument("sn"))
+                    result.success(status)
+                }
+                "unbindAlias" -> {
+                    var isSelf = call.argument<Boolean>("isSelf")
+                    if (isSelf == null) isSelf = false
+                    val status = PushManager.getInstance().unBindAlias(context, call.argument("alias"), isSelf)
+                    result.success(status)
+                }
                 "setTag" -> {
-                    val tags = call.arguments as List<*>
-                    if (tags.isNotEmpty()) {
+                    val tags = call.argument<List<String>>("tags")
+                    val sn = call.argument<String>("sn")
+                    if (tags != null && tags.isNotEmpty()) {
                         val tagArray = arrayOfNulls<Tag>(tags.size)
                         for (i in tags.indices) {
                             val tag = Tag()
-                            tag.name = tags[i] as String?
+                            tag.name = tags[i]
                             tagArray[i] = tag
                         }
-                        PushManager.getInstance().setTag(context, tagArray, "setTag")
+                        result.success(PushManager.getInstance().setTag(context, tagArray, sn))
+                    } else {
+                        result.success(false)
                     }
+                }
+                "setBadge" -> {
+                    val status = PushManager.getInstance().setHwBadgeNum(context, call.arguments as Int)
+                    result.success(status)
                 }
                 else -> result.notImplemented()
             }
@@ -69,20 +86,17 @@ class GeTuiPlugin : FlutterPlugin {
 
         // 接收 cid
         override fun onReceiveClientId(context: Context, clientid: String) {
-            handle.post {
-                channel.invokeMethod("onReceiveClientId", clientid)
-            }
+
         }
 
         // 处理透传消息
         override fun onReceiveMessageData(context: Context, msg: GTTransmitMessage) {
-
-            val payload: MutableMap<String?, Any?> = HashMap()
-            payload["messageId"] = msg.messageId
-            payload["payload"] = String(msg.payload)
-            payload["payloadId"] = msg.payloadId
-            payload["taskId"] = msg.taskId
-            handle.post { channel.invokeMethod("onReceiveMessageData", payload) }
+            val data: MutableMap<String?, Any?> = HashMap()
+            data["messageId"] = msg.messageId
+            data["payload"] = String(msg.payload)
+            data["payloadId"] = msg.payloadId
+            data["taskId"] = msg.taskId
+            handle.post { channel.invokeMethod("onReceiveMessageData", data) }
         }
 
         // cid 离线上线通知
@@ -99,28 +113,35 @@ class GeTuiPlugin : FlutterPlugin {
 
         // 通知到达，只有个推通道下发的通知会回调此方法
         override fun onNotificationMessageArrived(context: Context, message: GTNotificationMessage) {
-            val notification: MutableMap<String?, Any?> = HashMap()
-            notification["messageId"] = message.messageId
-            notification["taskId"] = message.taskId
-            notification["title"] = message.title
-            notification["content"] = message.content
+            val data: MutableMap<String?, Any?> = HashMap()
+            data["messageId"] = message.messageId
+            data["taskId"] = message.taskId
+            data["title"] = message.title
+            data["content"] = message.content
             handle.post {
-                channel.invokeMethod("onNotificationMessageArrived",
-                        notification)
+                channel.invokeMethod("onNotificationMessageArrived", data)
             }
         }
 
         // 通知点击，只有个推通道下发的通知会回调此方法
         override fun onNotificationMessageClicked(context: Context, message: GTNotificationMessage) {
-            val notification: MutableMap<String?, Any?> = HashMap()
-            notification["messageId"] = message.messageId
-            notification["taskId"] = message.taskId
-            notification["title"] = message.title
-            notification["content"] = message.content
+            val data: MutableMap<String?, Any?> = HashMap()
+            data["messageId"] = message.messageId
+            data["taskId"] = message.taskId
+            data["title"] = message.title
+            data["content"] = message.content
             handle.post {
-                channel.invokeMethod("onNotificationMessageClicked",
-                        notification)
+                channel.invokeMethod("onNotificationMessageClicked", data)
             }
+        }
+
+        //// 获取厂商 Token
+        override fun onReceiveDeviceToken(context: Context?, token: String?) {
+            super.onReceiveDeviceToken(context, token)
+            handle.post {
+                channel.invokeMethod("onReceiveDeviceToken", token)
+            }
+
         }
 
     }

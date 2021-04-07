@@ -58,22 +58,7 @@ android: {
 
 #### 2. 配置相应依赖
 
-1.该步骤需要在模块级别 `app/build.gradle` 中文件头配置 `apply plugin: 'com.huawei.agconnect
-'` 以及在 `dependencies` 块配置 HMS Push 依赖 `implementation 'com.huawei.hms:push:${version}'`，如下：
-
-```
-apply plugin: 'com.android.application'
-apply plugin: 'com.huawei.agconnect'
-android { 
-    ......
-}
-dependencies { 
-    ......
-    implementation 'com.huawei.hms:push:5.0.2.300'
-}
-```
-
-2.配置签名信息：将步骤一【创建华为应用】中官方文档**生成签名证书指纹步骤中生成的签名文件拷贝到工程的 app 目录下**，在 app/build
+1.配置签名信息：将步骤一【创建华为应用】中官方文档**生成签名证书指纹步骤中生成的签名文件拷贝到工程的 app 目录下**，在 app/build
 .gradle 文件中配置签名。如下（具体请根据您当前项目的配置修改）：
 
 ```
@@ -91,12 +76,19 @@ signingConfigs {
      }
      release {
          signingConfig signingConfigs.config
-         minifyEnabled false
-         proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
      }
  }
 ```
 
+##### iOS:
+1. 必须开启Push Notification能力。找到应用Target设置中的Signing & Capabilities，点击左上角 +Capability 添加。如果没有开启该开关，应用将获取不到DeviceToken
+
+2. 为了更好支持消息推送，提供更多的推送样式，提高消息到达率，需要配置后台运行权限：
+
+ 并保证"Background Modes"中的"Remote notifications"处于选中状态
+ 
+3. 使用NotificationService，同样开启Access WiFi Information设置。  + Capability
+ 添加 "Push Notifications"
 
 ### 使用
 ```dart
@@ -117,6 +109,17 @@ import 'package:flutter_getui/flutter_getui.dart';
 
 ### 公用 API
 ```dart
+    ///   0：成功
+    ///   10099：SDK 未初始化成功
+    ///   30001：解绑别名失败，频率过快，两次调用的间隔需大于 5s
+    ///   30002：解绑别名失败，参数错误
+    ///   30003：解绑别名请求被过滤
+    ///   30004：解绑别名失败，未知异常
+    ///   30005：解绑别名时，cid 未获取到
+    ///   30006：解绑别名时，发生网络错误
+    ///   30007：别名无效
+    ///   30008：sn 无效
+
     ///  绑定别名功能:后台可以根据别名进行推送
     ///  @param alias 别名字符串
     ///  @param aSn   绑定序列码, Android中无效，仅在iOS有效
@@ -127,6 +130,22 @@ import 'package:flutter_getui/flutter_getui.dart';
 
     /// 给用户打标签 , 后台可以根据标签进行推送
     /// @param tags 别名数组
+
+
+    ///   code 值说明
+    ///     0：成功
+    ///    10099：SDK 未初始化成功
+    ///    20001：tag 数量过大（单次设置的 tag 数量不超过 100)
+    ///    20002：调用次数超限（默认一天只能成功设置一次）
+    ///    20003：标签重复
+    ///    20004：服务初始化失败
+    ///    20005：setTag 异常
+    ///    20006：tag 为空
+    ///    20007：sn 为空
+    ///    20008：离线，还未登陆成功
+    ///    20009：该 appid 已经在黑名单列表（请联系技术支持处理）
+    ///    20010：已存 tag 数目超限
+    ///    20011：tag 内容格式不正确 *
 
     setGeTuiTag(tags);
 

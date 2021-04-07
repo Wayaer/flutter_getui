@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_getui/flutter_getui.dart';
 
@@ -5,10 +7,12 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   /// 初始化
-  initGeTui(
-      appId: 'cy0d7CICux7YKvteM5cy87',
-      appKey: 'DGb52WTbzf8QX2Joji9bJ5',
-      appSecret: 'ZpUhvjyrGv8d24tFCa4y95');
+  final bool? status = await initGeTui(
+      appId: 'FnFp1rNm2Z5TSclnkeK9H9',
+      appKey: 'FSqM3ZNYSO6QsWiaIJgXo4',
+      appSecret: 'fDJ8QwfGTJ6wLgGQeoiHM5');
+
+  print('是否初始化成功 = $status');
 
   runApp(MaterialApp(
       debugShowCheckedModeBanner: false, title: '个推', home: HomePage()));
@@ -20,152 +24,171 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String payloadInfo = 'default';
-  String notificationState = 'default';
-  String getClientId = '';
-  String getDeviceToken = '';
-  String getVoIpToken = '';
-  String onReceivePayload = '';
-  String onReceiveNotificationResponse = '';
-  String onAppLinkPayLoad = '';
-  String? onReceiveVoIpPayLoad;
+  String text = '';
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance!
-        .addPostFrameCallback((Duration timeStamp) => initPlatformState());
+        .addPostFrameCallback((Duration timeStamp) => initPush());
   }
 
-  Future<void> initPlatformState() async {
+  Future<void> initPush() async {
     addGeTuiEventHandler(
-      onReceiveClientId: (String message) async {
-        print('flutter onReceiveClientId: $message');
-        getClientId = message;
-        setState(() {});
-      },
       onReceiveOnlineState: (bool state) {
-        print('flutter onReceiveOnlineState: $state');
-      },
-      onReceiveMessageData: (Map<dynamic, dynamic> msg) async {
-        print('flutter onReceiveMessageData: $msg');
-        payloadInfo = msg['payload'].toString();
+        text = 'Android Push online Status $state';
         setState(() {});
       },
-      onNotificationMessageArrived: (Map<dynamic, dynamic> msg) async {
-        print('flutter onNotificationMessageArrived');
-        notificationState = 'Arrived';
+      onReceiveMessageData: (GTMessageModel? msg) async {
+        text = 'onReceiveMessageData ${msg?.toMap ?? 'null'}';
+        print('onReceiveMessageData ${msg?.toMap ?? 'null'}');
         setState(() {});
       },
-      onNotificationMessageClicked: (Map<dynamic, dynamic> msg) async {
-        print('flutter onNotificationMessageClicked');
-        notificationState = 'Clicked';
+      onNotificationMessageArrived: (GTMessageModel? msg) async {
+        text = 'onNotificationMessageArrived ${msg?.toMap ?? 'null'}';
+        print('onNotificationMessageArrived ${msg?.toMap ?? 'null'}');
         setState(() {});
       },
-      onRegisterDeviceToken: (String message) {
-        print('flutter onRegisterDeviceToken: $message');
-        getDeviceToken = message;
+      onNotificationMessageClicked: (GTMessageModel? msg) async {
+        text = 'onNotificationMessageClicked ${msg?.toMap ?? 'null'}';
+        print('onNotificationMessageClicked ${msg?.toMap ?? 'null'}');
         setState(() {});
       },
-      onReceivePayload: (Map<dynamic, dynamic> message) {
-        print('flutter onReceivePayload: $message');
-        onReceivePayload = message.toString();
-        setState(() {});
-      },
-      onReceiveNotificationResponse: (Map<dynamic, dynamic> message) {
-        print('flutter onReceiveNotificationResponse: $message');
-        onReceiveNotificationResponse = '$message';
+      onReceiveDeviceToken: (String? token) {
+        text = 'onReceiveDeviceToken $token';
+        print('onReceiveDeviceToken $token');
         setState(() {});
       },
       onAppLinkPayload: (String message) {
-        onAppLinkPayLoad = message;
+        text = 'onAppLinkPayload $message';
         setState(() {});
       },
       onRegisterVoIpToken: (String message) {
-        getVoIpToken = message;
+        text = 'onRegisterVoIpToken $message';
         setState(() {});
       },
       onReceiveVoIpPayLoad: (Map<dynamic, dynamic> message) {
-        onReceiveVoIpPayLoad = message.toString();
+        text = 'onReceiveVoIpPayLoad $message';
         setState(() {});
       },
     );
   }
 
   Future<void> getLaunchNotification() async {
-    final Map<dynamic, dynamic> info = (await getGeTuiLaunchNotification())!;
+    final Map<dynamic, dynamic>? info = await getIOSGeTuiLaunchNotification();
     print(info);
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(title: const Text('GeTui Example')),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Text('ClientId: $getClientId'),
-              const Text('SDK Public Function',
-                  style: TextStyle(color: Colors.lightBlue, fontSize: 18.0)),
-              Wrap(runSpacing: 10, spacing: 10, children: <Widget>[
-                ElevatedButton(
-                    onPressed: () async {
-                      final String getClientId = (await getGeTuiClientID())!;
-                      print(getClientId);
-                    },
-                    child: const Text('getClientId')),
-                ElevatedButton(
-                    onPressed: () => startGeTuiPush(),
-                    child: const Text('start push')),
-                ElevatedButton(
-                    onPressed: () => stopGeTuiPush(),
-                    child: const Text('stop push')),
-                ElevatedButton(
-                    onPressed: () => bindGeTuiAlias('test', ''),
-                    child: const Text('bindAlias')),
-                ElevatedButton(
-                    onPressed: () => unbindGeTuiAlias('test', '', true),
-                    child: const Text('unbindAlias')),
-                ElevatedButton(
-                    onPressed: () {
-                      final List<String> test = <String>[];
-                      test.add('abc');
-                      setGeTuiTag(test);
-                    },
-                    child: const Text('setTag')),
-              ]),
-              const Text('Android Public Function',
-                  style: TextStyle(color: Colors.lightBlue, fontSize: 18.0)),
-              Text('payload: $payloadInfo'),
-              Text('notification state: $notificationState'),
-              const SizedBox(height: 20),
-              const Text('ios Public Function',
-                  style: TextStyle(color: Colors.lightBlue, fontSize: 18.0)),
-              Wrap(runSpacing: 10, spacing: 10, children: <Widget>[
-                ElevatedButton(
-                    onPressed: getLaunchNotification,
-                    child: const Text('getLaunchNotification')),
-                ElevatedButton(
-                    onPressed: () => setGeTuiBadge(5),
-                    child: const Text('setBadge')),
-                ElevatedButton(
-                    onPressed: () => resetBadgeWithGeTui,
-                    child: const Text('resetBadge')),
-                ElevatedButton(
-                    onPressed: () => setLocalBadgeWithGeTui(5),
-                    child: const Text('setLocalBadge(5)')),
-                ElevatedButton(
-                    onPressed: () => setLocalBadgeWithGeTui(0),
-                    child: const Text('setLocalBadge(0)'))
-              ]),
-              Text('DeviceToken: $getDeviceToken'),
-              Text('VoIpToken: $getVoIpToken'),
-              Text('payload: $onReceivePayload'),
-              Text(
-                  'onReceiveNotificationResponse: $onReceiveNotificationResponse'),
-              Text('onAppLinkPayload: $onAppLinkPayLoad'),
-              Text('onReceiveVoIpPayLoad: $onReceiveVoIpPayLoad'),
+              Container(
+                  alignment: Alignment.center,
+                  height: 100,
+                  color: Colors.grey.withOpacity(0.2),
+                  width: double.infinity,
+                  margin: const EdgeInsets.all(10),
+                  child: Text(text)),
+              Wrap(
+                  runSpacing: 10,
+                  spacing: 10,
+                  alignment: WrapAlignment.center,
+                  children: <Widget>[
+                    ElevatedButton(
+                        onPressed: () async {
+                          final String? cid = await getGeTuiClientID();
+                          text = 'getGeTuiClientID: $cid';
+                          print(cid);
+                          setState(() {});
+                        },
+                        child: const Text('getGeTuiClientID')),
+                    ElevatedButton(
+                        onPressed: () async {
+                          final int? status =
+                              await setGeTuiTag(<String>['test1', 'test2']);
+                          if (status == null) return;
+                          text = 'setGeTuiTag  code=$status';
+                          setState(() {});
+                        },
+                        child: const Text('setGeTuiTag')),
+                    ElevatedButton(
+                        onPressed: () async {
+                          final bool? status = await bindGeTuiAlias('test');
+                          if (status == null) return;
+                          text = 'bindGeTuiAlias  $status';
+                          setState(() {});
+                        },
+                        child: const Text('bindGeTuiAlias')),
+                    ElevatedButton(
+                        onPressed: () async {
+                          final bool? status = await unbindGeTuiAlias('test');
+                          if (status == null) return;
+                          text = 'unbindGeTuiAlias  $status';
+                          setState(() {});
+                        },
+                        child: const Text('unbindGeTuiAlias')),
+                  ]),
+              const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Text('Android Public Function',
+                      style:
+                          TextStyle(color: Colors.lightBlue, fontSize: 18.0))),
+              Wrap(
+                  runSpacing: 10,
+                  spacing: 10,
+                  alignment: WrapAlignment.center,
+                  children: <Widget>[
+                    ElevatedButton(
+                        onPressed: () => startAndroidGeTuiPush(),
+                        child: const Text('start push')),
+                    ElevatedButton(
+                        onPressed: () => stopAndroidGeTuiPush(),
+                        child: const Text('stop push')),
+                    ElevatedButton(
+                        onPressed: () async {
+                          final bool? status = await isAndroidPushStatus();
+                          if (status == null) return;
+                          text = 'isAndroidPushStatus  $status';
+                          setState(() {});
+                        },
+                        child: const Text('isAndroidPushStatus')),
+                  ]),
+              const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Text('ios Public Function',
+                      style:
+                          TextStyle(color: Colors.lightBlue, fontSize: 18.0))),
+              Wrap(
+                  runSpacing: 10,
+                  spacing: 10,
+                  alignment: WrapAlignment.center,
+                  children: <Widget>[
+                    ElevatedButton(
+                        onPressed: getLaunchNotification,
+                        child: const Text('getLaunchNotification')),
+                    ElevatedButton(
+                        onPressed: () => setIOSGeTuiBadge(10),
+                        child: const Text('setBadge(10)')),
+                    ElevatedButton(
+                        onPressed: () => resetIOSGeTuiBadge,
+                        child: const Text('resetBadge')),
+                    ElevatedButton(
+                        onPressed: () async {
+                          await setIOSGeTuiLocalBadge(5);
+                          text = 'setIOSGeTuiLocalBadge = 5';
+                        },
+                        child: const Text('setLocalBadge(5)')),
+                    ElevatedButton(
+                        onPressed: () async {
+                          await setIOSGeTuiLocalBadge(0);
+                          text = 'setIOSGeTuiLocalBadge = 0';
+                        },
+                        child: const Text('setLocalBadge(0)')),
+                  ]),
             ]),
       ));
 }

@@ -28,9 +28,11 @@ rootProject.allprojects {
 }
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.huawei.agconnect'
 
 android {
     compileSdkVersion 30
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
@@ -40,9 +42,6 @@ android {
     }
     defaultConfig {
         minSdkVersion 17
-        ndk {
-            abiFilters "armeabi", "armeabi-v7a", "x86_64"
-        }
     }
     packagingOptions {
         merge 'AndroidManifest.xml'
