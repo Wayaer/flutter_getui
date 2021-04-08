@@ -18,7 +18,7 @@
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     FlutterMethodChannel* channel = [FlutterMethodChannel
-                                     methodChannelWithName:@"get_tui"
+                                     methodChannelWithName:@"ge_tui"
                                      binaryMessenger:[registrar messenger]];
     GeTuiPlugin* plugin = [[GeTuiPlugin alloc] initWithGeTuiPlugin:channel];
     [registrar addApplicationDelegate:plugin];
@@ -77,34 +77,6 @@
     }
 }
 
-//- (void)registerRemoteNotification {
-//
-//    /*
-//     警告：该方法需要开发者自定义，以下代码根据APP支持的iOS系统不同，代码可以对应修改。
-//     以下为演示代码，注意根据实际需要修改，注意测试支持的iOS系统都能获取到DeviceToken
-//     */
-//    if ([[UIDevice currentDevice].systemVersion floatValue] >= 10.0) {
-//#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0 // Xcode 8编译会调用
-//        if (@available(iOS 10.0, *)) {
-//            UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-//            center.delegate = self;
-//            [center requestAuthorizationWithOptions:(UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionCarPlay) completionHandler:^(BOOL granted, NSError *_Nullable error) {
-//                //if (!error)//NSLog(@"GeTui request authorization succeeded!");
-//
-//            }];
-//        } else {
-//            // Fallback on earlier versions
-//        }
-//
-//        [[UIApplication sharedApplication] registerForRemoteNotifications];
-//#else // Xcode 7编译会调用
-//        UIUserNotificationType types = (UIUserNotificationTypeAlert | UIUserNotificationTypeSound | UIUserNotificationTypeBadge);
-//        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:types categories:nil];
-//        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-//        [[UIApplication sharedApplication] registerForRemoteNotifications];
-//#endif
-//    }
-//}
 
 #pragma mark - AppDelegate
 
@@ -164,7 +136,6 @@
     //系统用 NSUserActivityTypeBrowsingWeb 表示对应的 universal HTTP links 触发
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         NSURL* webUrl = userActivity.webpageURL;
-        
         //处理个推APPLink回执统计
         //APPLink url 示例：https://link.applk.cn/getui?n=payload&p=mid， 其中 n=payload 字段存储下发的透传信息，可以根据透传内容进行业务操作。
         NSString* payload = [GeTuiSdk handleApplinkFeedback:webUrl];
@@ -219,7 +190,6 @@
     // [ GTSdk ]：汇报个推自定义事件(反馈透传消息)
     [GeTuiSdk sendFeedbackMessage:90001 andTaskId:taskId andMsgId:msgId];
     // 透传消息不会有alert，需要自己定义
-    // 数据转换
     NSMutableDictionary *payloadMsgDic = [NSMutableDictionary dictionaryWithDictionary:userInfo];
     [payloadMsgDic setObject:taskId forKey:@"taskId"];
     [payloadMsgDic setObject:[NSNumber numberWithBool:offLine] forKey:@"offLine"];

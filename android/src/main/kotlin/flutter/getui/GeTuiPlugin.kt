@@ -21,7 +21,7 @@ class GeTuiPlugin : FlutterPlugin {
     }
 
     override fun onAttachedToEngine(plugin: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(plugin.binaryMessenger, "get_tui")
+        channel = MethodChannel(plugin.binaryMessenger, "ge_tui")
         val context = plugin.applicationContext
         channel.setMethodCallHandler { call, result ->
             when (call.method) {

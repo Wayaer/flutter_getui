@@ -1,6 +1,7 @@
 ## [1.1.0]
  * normative approach
  * add doc
+ * fix bugs
 ## [1.0.2]
  * update dart version to 2.12.1
 ## [1.0.1]

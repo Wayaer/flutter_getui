@@ -149,6 +149,36 @@ import 'package:flutter_getui/flutter_getui.dart';
 
     setGeTuiTag(tags);
 
+     Future<void> initPush() async {
+       addGeTuiEventHandler(
+         onReceiveOnlineState: (bool? state) {
+           text = 'Android Push online Status $state';
+         },
+         onReceiveMessageData: (GTMessageModel? msg) async {
+           print('onReceiveMessageData ${msg?.toMap ?? 'null'}');
+         },
+         onNotificationMessageArrived: (GTMessageModel? msg) async {
+           print('onNotificationMessageArrived ${msg?.toMap ?? 'null'}');
+         },
+         onNotificationMessageClicked: (GTMessageModel? msg) async {
+           print('onNotificationMessageClicked ${msg?.toMap ?? 'null'}');
+         },
+         onReceiveDeviceToken: (String? token) {
+           print('onReceiveDeviceToken $token');
+         },
+         onAppLinkPayload: (String? message) {
+           text = 'onAppLinkPayload $message';
+         },
+         onRegisterVoIpToken: (String? message) {
+           text = 'onRegisterVoIpToken $message';
+         },
+         onReceiveVoIpPayLoad: (Map<dynamic, dynamic>? message) {
+           text = 'onReceiveVoIpPayLoad $message';
+         },
+       );
+     }
+
+
 ```
 ### Android APi
 ```dart
@@ -159,27 +189,34 @@ import 'package:flutter_getui/flutter_getui.dart';
      ///  开启SDK服务
      startGeTuiPush();
 
+     ///  检查集成结果
+     checkAndroidManifest();
+
+     ///  检测android 推送服务状态
+     isAndroidPushStatus();
+
+     /// 设置华为 badge
+     setAndroidBadge();
+
 ```
 
 ### iOS API
 
 ```dart
      ///  同步服务端角标
-
-     setBadgeWithGeTui(badge);
+     setIOSGeTuiBadge(badge);
 
      ///  复位服务端角标
-
-     resetBadgeWithGeTui();
+     resetIOSGeTuiBadge();
 
       ///  同步App本地角标
- 
-     setLocalBadgeWithGeTui(badge); 
-
+     setIOSGeTuiLocalBadge(badge); 
 
       ///  获取冷启动Apns参数
+     getIOSGeTuiLaunchNotification();
 
-     getGeTuiLaunchNotification();
+     ///  注册 voip 推送服务
+     voIpRegistrationForIOS();
 
 ```
 

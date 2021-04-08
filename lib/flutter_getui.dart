@@ -3,12 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 
-typedef EventHandler = void Function(String res);
-typedef EventHandlerBool = void Function(bool online);
-typedef EventHandlerMap = void Function(Map<dynamic, dynamic> event);
+typedef EventHandler = void Function(String? res);
+typedef EventHandlerBool = void Function(bool? online);
+typedef EventHandlerMap = void Function(Map<dynamic, dynamic>? event);
 typedef EventHandlerMessageModel = void Function(GTMessageModel? message);
 
-const MethodChannel _channel = MethodChannel('get_tui');
+const MethodChannel _channel = MethodChannel('ge_tui');
 
 /// 初始化sdk
 Future<bool?> initGeTui(

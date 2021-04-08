@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_getui/flutter_getui.dart';
 
@@ -7,10 +5,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   /// 初始化
-  final bool? status = await initGeTui(
-      appId: 'FnFp1rNm2Z5TSclnkeK9H9',
-      appKey: 'FSqM3ZNYSO6QsWiaIJgXo4',
-      appSecret: 'fDJ8QwfGTJ6wLgGQeoiHM5');
+  final bool? status =
+      await initGeTui(appId: 'appid', appKey: 'appKey', appSecret: 'appSecret');
 
   print('是否初始化成功 = $status');
 
@@ -35,7 +31,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> initPush() async {
     addGeTuiEventHandler(
-      onReceiveOnlineState: (bool state) {
+      onReceiveOnlineState: (bool? state) {
         text = 'Android Push online Status $state';
         setState(() {});
       },
@@ -59,15 +55,15 @@ class _HomePageState extends State<HomePage> {
         print('onReceiveDeviceToken $token');
         setState(() {});
       },
-      onAppLinkPayload: (String message) {
+      onAppLinkPayload: (String? message) {
         text = 'onAppLinkPayload $message';
         setState(() {});
       },
-      onRegisterVoIpToken: (String message) {
+      onRegisterVoIpToken: (String? message) {
         text = 'onRegisterVoIpToken $message';
         setState(() {});
       },
-      onReceiveVoIpPayLoad: (Map<dynamic, dynamic> message) {
+      onReceiveVoIpPayLoad: (Map<dynamic, dynamic>? message) {
         text = 'onReceiveVoIpPayLoad $message';
         setState(() {});
       },
