@@ -1,3 +1,5 @@
+## [1.1.1]
+ * add consumer-rules.pro for android
 ## [1.1.0]
  * normative approach
  * add doc
