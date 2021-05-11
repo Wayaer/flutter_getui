@@ -5,6 +5,21 @@
 ### Android:
 #### 1.添加相关配置：
 
+支持电子围栏功能
+
+Android 可选权限
+在 `/android/app/src/main/AndroidManifest.xml` 中添加下列代码：
+
+```xml
+
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION”/>
+
+```
+
 在 `/android/app/build.gradle` 中添加下列代码：
 
 ```groovy

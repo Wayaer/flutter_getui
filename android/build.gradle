@@ -3,26 +3,25 @@ version '1.0'
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven {
-            url "http://mvn.gt.getui.com/nexus/content/repositories/releases/"
+            url 'http://mvn.gt.getui.com/nexus/content/repositories/releases/'
         }
         maven { url 'http://developer.huawei.com/repo/' }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.2'
-        classpath 'com.huawei.agconnect:agcp:1.3.1.300'
+        classpath 'com.android.tools.build:gradle:4.2.0'
+        classpath 'com.huawei.agconnect:agcp:1.4.2.300'
     }
 }
 rootProject.allprojects {
     repositories {
-        //Maven URL地址
         maven {
-            url "http://mvn.gt.getui.com/nexus/content/repositories/releases/"
+            url 'http://mvn.gt.getui.com/nexus/content/repositories/releases/'
         }
         maven { url 'http://developer.huawei.com/repo/' }
-        jcenter()
+        mavenCentral()
         google()
     }
 }
@@ -50,25 +49,25 @@ android {
 }
 
 dependencies {
-    implementation 'com.getui:gtsdk:3.1.2.0'  //个推SDK
-    implementation 'com.getui:gtc:3.1.0.0'
+    implementation 'com.getui:gtsdk:3.2.0.0'
+    implementation 'com.getui:gtc:3.1.1.0'
 
     implementation('com.getui:hwp-v4:2.0.0') {
         exclude group: 'com.getui', module: 'sdk'
     }
-    implementation('com.getui:mzp:1.0.7') {
+    implementation('com.getui:mzp:1.1.1') {
         exclude group: 'com.getui', module: 'sdk'
     }
     implementation('com.assist:oppo:1.0.7') {
         exclude group: 'com.getui', module: 'sdk'
     }
-    implementation('com.assist:vivo:1.0.6') {
+    implementation('com.assist:vivo:1.0.7') {
         exclude group: 'com.getui', module: 'sdk'
     }
-    implementation('com.getui:xmp:1.0.8') {
+    implementation('com.getui:xmp:1.0.9') {
         exclude group: 'com.getui', module: 'sdk'
     }
-    implementation 'com.huawei.hms:push:5.0.2.300'
+    implementation 'com.huawei.hms:push:5.0.4.302'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 }

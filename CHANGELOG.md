@@ -1,3 +1,6 @@
+## [1.1.2]
+ * update Android com.android.tools.build:gradle version
+ * replace jcenter() to mavenCentral()
 ## [1.1.1]
  * add consumer-rules.pro for android
 ## [1.1.0]
