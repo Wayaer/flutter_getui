@@ -54,11 +54,14 @@
     } else if([@"setBadge" isEqualToString:call.method]) {
         NSUInteger value = [call.arguments integerValue];
         [GeTuiSdk setBadge:value];
+        result(@(YES));
     } else if([@"resetBadge" isEqualToString:call.method]) {
         [GeTuiSdk resetBadge];
+        result(@(YES));
     } else if([@"setLocalBadge" isEqualToString:call.method]) {
         NSUInteger value = [call.arguments integerValue];
         [UIApplication sharedApplication].applicationIconBadgeNumber = value;
+        result(@(YES));
     } else if([@"getLaunchNotification" isEqualToString:call.method]) {
         result(_launchNotification ?: @{});
     } else {

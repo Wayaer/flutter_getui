@@ -58,7 +58,7 @@ Future<bool> bindGeTuiAlias(String alias, {String sn = ''}) async {
 /// alias 别名字符串
 /// sn  绑定序列码 默认为 ‘’
 /// isSelf  是否只对当前cid有效，如果是true，只对当前cid做解绑；如果是false，对所有绑定该别名的cid列表做解绑
-Future<bool?> unbindGeTuiAlias(String alias,
+Future<bool> unbindGeTuiAlias(String alias,
     {String sn = '', bool isSelf = true}) async {
   final bool? state = await _channel.invokeMethod<bool?>('unbindAlias',
       <String, dynamic>{'alias': alias, 'aSn': sn, 'isSelf': isSelf});
@@ -106,27 +106,31 @@ Future<bool> isAndroidPushStatus() async {
   return status ?? false;
 }
 
-/// 设置华为 badge only android
-/// 仅支持华为
-Future<void> setAndroidBadge(int badge) async {
-  if (Platform.isAndroid)
-    await _channel.invokeMethod<dynamic>('setBadge', badge);
+/// setGeTuiBadge
+/// 支持ios android
+/// android 仅支持华为
+Future<bool> setGeTuiBadge(int badge) async {
+  final bool? status = await _channel.invokeMethod<bool?>('setBadge', badge);
+  return status ?? false;
 }
 
 /// only ios
-Future<void> setIOSGeTuiBadge(int badge) async {
-  if (Platform.isIOS) await _channel.invokeMethod<dynamic>('setBadge', badge);
+Future<bool> resetIOSGeTuiBadge() async {
+  if (Platform.isIOS) {
+    final bool? status = await _channel.invokeMethod<bool?>('resetBadge');
+    return status ?? false;
+  }
+  return false;
 }
 
 /// only ios
-Future<void> get resetIOSGeTuiBadge async {
-  if (Platform.isIOS) await _channel.invokeMethod<dynamic>('resetBadge');
-}
-
-/// only ios
-Future<void> setIOSGeTuiLocalBadge(int badge) async {
-  if (Platform.isIOS)
-    await _channel.invokeMethod<dynamic>('setLocalBadge', badge);
+Future<bool> setIOSGeTuiLocalBadge(int badge) async {
+  if (Platform.isIOS) {
+    final bool? status =
+        await _channel.invokeMethod<bool?>('setLocalBadge', badge);
+    return status ?? false;
+  }
+  return false;
 }
 
 /// only ios

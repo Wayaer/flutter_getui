@@ -127,6 +127,13 @@ class _HomePageState extends State<HomePage> {
                           setState(() {});
                         },
                         child: const Text('unbindGeTuiAlias')),
+                    ElevatedButton(
+                        onPressed: () async {
+                          final bool status = await setGeTuiBadge(10);
+                          text = 'setGeTuiBadge  $status';
+                          setState(() {});
+                        },
+                        child: const Text('setGeTuiBadge （Android 仅支持华为）')),
                   ]),
               const Padding(
                   padding: EdgeInsets.symmetric(vertical: 10),
@@ -139,15 +146,22 @@ class _HomePageState extends State<HomePage> {
                   alignment: WrapAlignment.center,
                   children: <Widget>[
                     ElevatedButton(
-                        onPressed: () => startAndroidGeTuiPush(),
+                        onPressed: () async {
+                          final bool status = await startAndroidGeTuiPush();
+                          text = 'startAndroidGeTuiPush  $status';
+                          setState(() {});
+                        },
                         child: const Text('start push')),
                     ElevatedButton(
-                        onPressed: () => stopAndroidGeTuiPush(),
+                        onPressed: () async {
+                          final bool status = await stopAndroidGeTuiPush();
+                          text = 'stopAndroidGeTuiPush  $status';
+                          setState(() {});
+                        },
                         child: const Text('stop push')),
                     ElevatedButton(
                         onPressed: () async {
-                          final bool? status = await isAndroidPushStatus();
-                          if (status == null) return;
+                          final bool status = await isAndroidPushStatus();
                           text = 'isAndroidPushStatus  $status';
                           setState(() {});
                         },
@@ -155,7 +169,7 @@ class _HomePageState extends State<HomePage> {
                   ]),
               const Padding(
                   padding: EdgeInsets.symmetric(vertical: 10),
-                  child: Text('ios Public Function',
+                  child: Text('IOS Public Function',
                       style:
                           TextStyle(color: Colors.lightBlue, fontSize: 18.0))),
               Wrap(
@@ -167,11 +181,8 @@ class _HomePageState extends State<HomePage> {
                         onPressed: getLaunchNotification,
                         child: const Text('getLaunchNotification')),
                     ElevatedButton(
-                        onPressed: () => setIOSGeTuiBadge(10),
-                        child: const Text('setBadge(10)')),
-                    ElevatedButton(
-                        onPressed: () => resetIOSGeTuiBadge,
-                        child: const Text('resetBadge')),
+                        onPressed: () => resetIOSGeTuiBadge(),
+                        child: const Text('resetIOSGeTuiBadge')),
                     ElevatedButton(
                         onPressed: () async {
                           await setIOSGeTuiLocalBadge(5);
