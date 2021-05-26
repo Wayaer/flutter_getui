@@ -5,7 +5,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   /// 初始化
-  final bool? status =
+  final bool status =
       await initGeTui(appId: 'appid', appKey: 'appKey', appSecret: 'appSecret');
 
   print('是否初始化成功 = $status');
@@ -83,10 +83,10 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Container(
+                  padding: const EdgeInsets.all(10),
                   alignment: Alignment.center,
                   height: 100,
                   color: Colors.grey.withOpacity(0.2),
-                  width: double.infinity,
                   margin: const EdgeInsets.all(10),
                   child: Text(text)),
               Wrap(

@@ -1,4 +1,4 @@
-package flutter.getui
+package fl.getui
 
 import android.content.Context
 import android.os.Handler
@@ -29,14 +29,25 @@ class GeTuiPlugin : FlutterPlugin {
                     PushManager.getInstance().initialize(context)
                     result.success(true)
                 }
-                "checkManifest" -> PushManager.getInstance().checkManifest(context)
+                "checkManifest" -> {
+                    PushManager.getInstance().checkManifest(context)
+                    result.success(true)
+                }
                 "getClientId" -> result.success(PushManager.getInstance().getClientid(context))
-                "startPush" -> PushManager.getInstance().turnOnPush(context)
-                "stopPush" -> PushManager.getInstance().turnOffPush(context)
+                "startPush" -> {
+                    PushManager.getInstance().turnOnPush(context)
+                    result.success(true)
+                }
+                "stopPush" -> {
+                    PushManager.getInstance().turnOffPush(context)
+                    result.success(true)
+                }
                 "isPushTurnedOn" -> result.success(PushManager.getInstance().isPushTurnedOn(context))
                 "bindAlias" -> {
-                    val status = PushManager.getInstance().bindAlias(context,
-                            call.argument("alias"), call.argument("sn"))
+                    val status = PushManager.getInstance().bindAlias(
+                        context,
+                        call.argument("alias"), call.argument("sn")
+                    )
                     result.success(status)
                 }
                 "unbindAlias" -> {
@@ -57,7 +68,7 @@ class GeTuiPlugin : FlutterPlugin {
                         }
                         result.success(PushManager.getInstance().setTag(context, tagArray, sn))
                     } else {
-                        result.success(false)
+                        result.success(1)
                     }
                 }
                 "setBadge" -> {

@@ -11,33 +11,36 @@ typedef EventHandlerMessageModel = void Function(GTMessageModel? message);
 const MethodChannel _channel = MethodChannel('ge_tui');
 
 /// 初始化sdk
-Future<bool?> initGeTui(
+Future<bool> initGeTui(
     {String? appId, String? appKey, String? appSecret}) async {
+  bool? state = false;
   if (Platform.isAndroid) {
-    return await _channel.invokeMethod<bool?>('initPush');
+    state = await _channel.invokeMethod<bool?>('initPush');
   } else if (Platform.isIOS) {
     assert(appId != null);
     assert(appKey != null);
     assert(appSecret != null);
-    return await _channel.invokeMethod<bool?>('initSDK', <String, dynamic>{
+    state = await _channel.invokeMethod<bool?>('initSDK', <String, dynamic>{
       'appId': appId,
       'appKey': appKey,
       'appSecret': appSecret
     });
   }
-  return false;
+  return state ?? false;
 }
 
 /// ios注册 voip 推送服务
-Future<void> voIpRegistrationForIOS() async {
-  if (!Platform.isIOS) return;
-  return await _channel.invokeMethod<dynamic>('voipRegistration');
+Future<bool> voIpRegistrationForIOS() async {
+  if (!Platform.isIOS) return false;
+  final bool? state = await _channel.invokeMethod<bool?>('voipRegistration');
+  return state ?? false;
 }
 
 /// 检查集成结果 仅支持Android
-Future<void> checkAndroidManifest() async {
-  if (!Platform.isAndroid) return;
-  return await _channel.invokeMethod<dynamic>('checkManifest');
+Future<bool> checkAndroidManifest() async {
+  if (!Platform.isAndroid) return false;
+  final bool? state = await _channel.invokeMethod<bool?>('checkManifest');
+  return state ?? false;
 }
 
 /// 获取 clientId
@@ -45,24 +48,30 @@ Future<String?> getGeTuiClientID() => _channel.invokeMethod('getClientId');
 
 /// 绑定 Alias
 /// sn  绑定序列码 默认为 ‘’
-Future<bool?> bindGeTuiAlias(String alias, {String sn = ''}) =>
-    _channel.invokeMethod<bool?>(
-        'bindAlias', <String, dynamic>{'alias': alias, 'aSn': sn});
+Future<bool> bindGeTuiAlias(String alias, {String sn = ''}) async {
+  final bool? state = await _channel.invokeMethod<bool?>(
+      'bindAlias', <String, dynamic>{'alias': alias, 'aSn': sn});
+  return state ?? false;
+}
 
 /// 解绑 Alias
 /// alias 别名字符串
 /// sn  绑定序列码 默认为 ‘’
 /// isSelf  是否只对当前cid有效，如果是true，只对当前cid做解绑；如果是false，对所有绑定该别名的cid列表做解绑
 Future<bool?> unbindGeTuiAlias(String alias,
-        {String sn = '', bool isSelf = true}) =>
-    _channel.invokeMethod<bool?>('unbindAlias',
-        <String, dynamic>{'alias': alias, 'aSn': sn, 'isSelf': isSelf});
+    {String sn = '', bool isSelf = true}) async {
+  final bool? state = await _channel.invokeMethod<bool?>('unbindAlias',
+      <String, dynamic>{'alias': alias, 'aSn': sn, 'isSelf': isSelf});
+  return state ?? false;
+}
 
 /// 设置Tag
 /// sn 序列号 仅支持Android
 /// return code = 0 为成功，其他状态🐴 Android
 /// ios 成功为0， 失败为 1
+/// android 失败为 1
 Future<int?> setGeTuiTag(List<String> tags, {String sn = ''}) async {
+  assert(tags.isNotEmpty, 'tags 不能为空');
   if (Platform.isAndroid) {
     return await _channel.invokeMethod<int?>(
         'setTag', <String, dynamic>{'tags': tags, 'sn': sn});
@@ -75,19 +84,26 @@ Future<int?> setGeTuiTag(List<String> tags, {String sn = ''}) async {
 }
 
 /// 开启推送 only android
-Future<void> startAndroidGeTuiPush() async {
-  if (Platform.isAndroid) await _channel.invokeMethod<dynamic>('startPush');
+Future<bool> startAndroidGeTuiPush() async {
+  bool? status = false;
+  if (Platform.isAndroid)
+    status = await _channel.invokeMethod<bool?>('startPush');
+  return status ?? false;
 }
 
 /// 关闭推送 only android
-Future<void> stopAndroidGeTuiPush() async {
-  if (Platform.isAndroid) await _channel.invokeMethod<dynamic>('stopPush');
+Future<bool> stopAndroidGeTuiPush() async {
+  bool? status = false;
+  if (Platform.isAndroid)
+    status = await _channel.invokeMethod<bool?>('stopPush');
+  return status ?? false;
 }
 
 /// 检测android 推送服务状态
-Future<bool?> isAndroidPushStatus() async {
+Future<bool> isAndroidPushStatus() async {
   if (!Platform.isAndroid) return false;
-  return await _channel.invokeMethod<bool?>('isPushTurnedOn');
+  final bool? status = await _channel.invokeMethod<bool?>('isPushTurnedOn');
+  return status ?? false;
 }
 
 /// 设置华为 badge only android
@@ -152,18 +168,18 @@ void addGeTuiEventHandler({
     switch (call.method) {
       case 'onReceiveOnlineState':
         if (onReceiveOnlineState == null) return;
-        return onReceiveOnlineState(call.arguments as bool);
+        return onReceiveOnlineState(call.arguments as bool?);
       case 'onReceiveMessageData':
         if (onReceiveMessageData == null) return;
         final Map<dynamic, dynamic>? map =
-            call.arguments as Map<dynamic, dynamic>;
+            call.arguments as Map<dynamic, dynamic>?;
         if (map != null)
           return onReceiveMessageData(GTMessageModel.fromJson(map));
         return onReceiveMessageData(null);
       case 'onNotificationMessageArrived':
         if (onNotificationMessageArrived == null) return;
         final Map<dynamic, dynamic>? map =
-            call.arguments as Map<dynamic, dynamic>;
+            call.arguments as Map<dynamic, dynamic>?;
         if (map != null)
           return onNotificationMessageArrived(GTMessageModel.fromJson(map));
         return onNotificationMessageArrived(null);
@@ -171,7 +187,7 @@ void addGeTuiEventHandler({
       case 'onNotificationMessageClicked':
         if (onNotificationMessageClicked == null) return;
         final Map<dynamic, dynamic>? map =
-            call.arguments as Map<dynamic, dynamic>;
+            call.arguments as Map<dynamic, dynamic>?;
         if (map != null)
           return onNotificationMessageClicked(GTMessageModel.fromJson(map));
         return onNotificationMessageClicked(null);
@@ -190,9 +206,7 @@ void addGeTuiEventHandler({
 
       case 'onReceiveVoIpPayLoad':
         if (onReceiveVoIpPayLoad == null) return;
-        final Map<dynamic, dynamic> map =
-            call.arguments as Map<dynamic, dynamic>;
-        return onReceiveVoIpPayLoad(map);
+        return onReceiveVoIpPayLoad(call.arguments as Map<dynamic, dynamic>?);
       default:
         throw UnsupportedError('Unrecognized Event');
     }

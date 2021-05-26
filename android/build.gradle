@@ -1,4 +1,4 @@
-group 'flutter.getui'
+group 'fl.getui'
 version '1.0'
 buildscript {
     repositories {
@@ -11,7 +11,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.0'
+        classpath 'com.android.tools.build:gradle:4.2.1'
         classpath 'com.huawei.agconnect:agcp:1.4.2.300'
     }
 }
@@ -68,7 +68,7 @@ dependencies {
         exclude group: 'com.getui', module: 'sdk'
     }
     implementation 'com.huawei.hms:push:5.0.4.302'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.10"
 
 }
 repositories {

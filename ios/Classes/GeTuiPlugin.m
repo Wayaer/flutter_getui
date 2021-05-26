@@ -37,15 +37,16 @@
         [self initSDK:call result:result];
     } else if([@"voipRegistration" isEqualToString:call.method]) {
         [self voipRegistration];
+        result(@(YES));
     } else  if([@"bindAlias" isEqualToString:call.method]) {
         NSDictionary *info = call.arguments;
         [GeTuiSdk bindAlias:info[@"alias"] andSequenceNum:info[@"aSn"]];
-        result([NSNumber numberWithBool:YES]);
+        result(@(YES));
     } else if([@"unbindAlias" isEqualToString:call.method]) {
         NSDictionary *info = call.arguments;
         BOOL isSelf= [info[@"isSelf"] boolValue];
         [GeTuiSdk unbindAlias:info[@"alias"] andSequenceNum:info[@"aSn"] andIsSelf:isSelf];
-        result([NSNumber numberWithBool:YES]);
+        result(@(YES));
     } else if([@"setTag" isEqualToString:call.method]) {
         result([NSNumber numberWithBool:[GeTuiSdk setTags:call.arguments]]);
     } else if([@"getClientId" isEqualToString:call.method]) {
@@ -71,9 +72,9 @@
     [GeTuiSdk startSdkWithAppId:ConfigurationInfo[@"appId"] appKey:ConfigurationInfo[@"appKey"] appSecret:ConfigurationInfo[@"appSecret"] delegate:self];
     if (@available(iOS 10.0, *)) {
         [GeTuiSdk registerRemoteNotification:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge)];
-        result([NSNumber numberWithBool:YES]);
+        result(@(YES));
     }else{
-        result([NSNumber numberWithBool:NO]);
+        result(@(NO));
     }
 }
 

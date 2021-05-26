@@ -51,7 +51,7 @@ android: {
 
 ### 集成 HMS SDK
 
-#### 1. 添加应用的 AppGallery Connect 配置文件
+#### - 添加应用的 AppGallery Connect 配置文件
 
 1. 登录 AppGallery Connect 网站，选择“我的应用”。找到应用所在的产品，点击应用名称。
 
@@ -71,7 +71,7 @@ android: {
      | ......
    ```
 
-#### 2. 配置相应依赖
+#### - 配置相应依赖
 
 1.配置签名信息：将步骤一【创建华为应用】中官方文档**生成签名证书指纹步骤中生成的签名文件拷贝到工程的 app 目录下**，在 app/build
 .gradle 文件中配置签名。如下（具体请根据您当前项目的配置修改）：
@@ -111,7 +111,7 @@ import 'package:flutter_getui/flutter_getui.dart';
 
 ```
 
-### 初始化个推sdk
+### - 初始化个推sdk
 
 ```dart
    void main(){
@@ -122,7 +122,7 @@ import 'package:flutter_getui/flutter_getui.dart';
     }
 ```
 
-### 公用 API
+### - 公用 API
 ```dart
     ///   0：成功
     ///   10099：SDK 未初始化成功
@@ -195,7 +195,7 @@ import 'package:flutter_getui/flutter_getui.dart';
 
 
 ```
-### Android APi
+### - Android APi
 ```dart
      ///  停止SDK服务
 

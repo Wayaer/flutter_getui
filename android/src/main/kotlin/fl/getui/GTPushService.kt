@@ -1,4 +1,4 @@
-package flutter.getui
+package fl.getui
 
 import com.igexin.sdk.PushService
 
