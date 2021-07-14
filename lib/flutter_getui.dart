@@ -316,7 +316,7 @@ class _AlertModel {
 
 bool get _supportPlatform {
   if (!kIsWeb && (_isAndroid || _isIOS)) return true;
-  print('not support Platform');
+  print('Not support platform for $defaultTargetPlatform');
   return false;
 }
 

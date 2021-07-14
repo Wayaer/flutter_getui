@@ -1,4 +1,5 @@
 ## [1.2.1]
+ * upgrade Android GeTui SDK version
  * add platform restrictions
 ## [1.2.0]
  * modify the return parameter to be non null
