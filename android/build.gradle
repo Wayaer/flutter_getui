@@ -11,7 +11,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.1'
+        classpath 'com.android.tools.build:gradle:4.2.2'
         classpath 'com.huawei.agconnect:agcp:1.4.2.300'
     }
 }
@@ -49,8 +49,8 @@ android {
 }
 
 dependencies {
-    implementation 'com.getui:gtsdk:3.2.0.0'
-    implementation 'com.getui:gtc:3.1.1.0'
+    implementation 'com.getui:gtsdk:3.2.2.0'
+    implementation 'com.getui:gtc:3.1.2.0'
 
     implementation('com.getui:hwp-v4:2.0.0') {
         exclude group: 'com.getui', module: 'sdk'
@@ -68,7 +68,7 @@ dependencies {
         exclude group: 'com.getui', module: 'sdk'
     }
     implementation 'com.huawei.hms:push:5.0.4.302'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.10"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.21"
 
 }
 repositories {

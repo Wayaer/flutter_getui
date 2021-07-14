@@ -1,7 +1,9 @@
+## [1.2.1]
+ * add platform restrictions
 ## [1.2.0]
-  * modify the return parameter to be non null
-  * update Android version
-  * add return parameter
+ * modify the return parameter to be non null
+ * update Android version
+ * add return parameter
 ## [1.1.2]
  * update Android com.android.tools.build:gradle version
  * replace jcenter() to mavenCentral()

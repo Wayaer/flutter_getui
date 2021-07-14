@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 typedef EventHandler = void Function(String? res);
@@ -13,10 +13,11 @@ const MethodChannel _channel = MethodChannel('ge_tui');
 /// 初始化sdk
 Future<bool> initGeTui(
     {String? appId, String? appKey, String? appSecret}) async {
+  if (!_supportPlatform) return false;
   bool? state = false;
-  if (Platform.isAndroid) {
+  if (_isAndroid) {
     state = await _channel.invokeMethod<bool?>('initPush');
-  } else if (Platform.isIOS) {
+  } else if (_isIOS) {
     assert(appId != null);
     assert(appKey != null);
     assert(appSecret != null);
@@ -31,24 +32,28 @@ Future<bool> initGeTui(
 
 /// ios注册 voip 推送服务
 Future<bool> voIpRegistrationForIOS() async {
-  if (!Platform.isIOS) return false;
+  if (!_isIOS) return false;
   final bool? state = await _channel.invokeMethod<bool?>('voipRegistration');
   return state ?? false;
 }
 
 /// 检查集成结果 仅支持Android
 Future<bool> checkAndroidManifest() async {
-  if (!Platform.isAndroid) return false;
+  if (!_isAndroid) return false;
   final bool? state = await _channel.invokeMethod<bool?>('checkManifest');
   return state ?? false;
 }
 
 /// 获取 clientId
-Future<String?> getGeTuiClientID() => _channel.invokeMethod('getClientId');
+Future<String?> getGeTuiClientID() async {
+  if (!_supportPlatform) return null;
+  return await _channel.invokeMethod<String?>('getClientId');
+}
 
 /// 绑定 Alias
 /// sn  绑定序列码 默认为 ‘’
 Future<bool> bindGeTuiAlias(String alias, {String sn = ''}) async {
+  if (!_supportPlatform) return false;
   final bool? state = await _channel.invokeMethod<bool?>(
       'bindAlias', <String, dynamic>{'alias': alias, 'aSn': sn});
   return state ?? false;
@@ -60,6 +65,7 @@ Future<bool> bindGeTuiAlias(String alias, {String sn = ''}) async {
 /// isSelf  是否只对当前cid有效，如果是true，只对当前cid做解绑；如果是false，对所有绑定该别名的cid列表做解绑
 Future<bool> unbindGeTuiAlias(String alias,
     {String sn = '', bool isSelf = true}) async {
+  if (!_supportPlatform) return false;
   final bool? state = await _channel.invokeMethod<bool?>('unbindAlias',
       <String, dynamic>{'alias': alias, 'aSn': sn, 'isSelf': isSelf});
   return state ?? false;
@@ -71,11 +77,12 @@ Future<bool> unbindGeTuiAlias(String alias,
 /// ios 成功为0， 失败为 1
 /// android 失败为 1
 Future<int?> setGeTuiTag(List<String> tags, {String sn = ''}) async {
+  if (!_supportPlatform) return null;
   assert(tags.isNotEmpty, 'tags 不能为空');
-  if (Platform.isAndroid) {
+  if (_isAndroid) {
     return await _channel.invokeMethod<int?>(
         'setTag', <String, dynamic>{'tags': tags, 'sn': sn});
-  } else if (Platform.isIOS) {
+  } else if (_isIOS) {
     final bool? status = await _channel.invokeMethod<bool?>(
         'setTag', <String, dynamic>{'tags': tags, 'sn': sn});
     return (status ?? false) ? 0 : 1;
@@ -86,22 +93,20 @@ Future<int?> setGeTuiTag(List<String> tags, {String sn = ''}) async {
 /// 开启推送 only android
 Future<bool> startAndroidGeTuiPush() async {
   bool? status = false;
-  if (Platform.isAndroid)
-    status = await _channel.invokeMethod<bool?>('startPush');
+  if (_isAndroid) status = await _channel.invokeMethod<bool?>('startPush');
   return status ?? false;
 }
 
 /// 关闭推送 only android
 Future<bool> stopAndroidGeTuiPush() async {
   bool? status = false;
-  if (Platform.isAndroid)
-    status = await _channel.invokeMethod<bool?>('stopPush');
+  if (_isAndroid) status = await _channel.invokeMethod<bool?>('stopPush');
   return status ?? false;
 }
 
 /// 检测android 推送服务状态
 Future<bool> isAndroidPushStatus() async {
-  if (!Platform.isAndroid) return false;
+  if (!_isAndroid) return false;
   final bool? status = await _channel.invokeMethod<bool?>('isPushTurnedOn');
   return status ?? false;
 }
@@ -110,13 +115,14 @@ Future<bool> isAndroidPushStatus() async {
 /// 支持ios android
 /// android 仅支持华为
 Future<bool> setGeTuiBadge(int badge) async {
+  if (!_supportPlatform) return false;
   final bool? status = await _channel.invokeMethod<bool?>('setBadge', badge);
   return status ?? false;
 }
 
 /// only ios
 Future<bool> resetIOSGeTuiBadge() async {
-  if (Platform.isIOS) {
+  if (_isIOS) {
     final bool? status = await _channel.invokeMethod<bool?>('resetBadge');
     return status ?? false;
   }
@@ -125,7 +131,7 @@ Future<bool> resetIOSGeTuiBadge() async {
 
 /// only ios
 Future<bool> setIOSGeTuiLocalBadge(int badge) async {
-  if (Platform.isIOS) {
+  if (_isIOS) {
     final bool? status =
         await _channel.invokeMethod<bool?>('setLocalBadge', badge);
     return status ?? false;
@@ -135,8 +141,7 @@ Future<bool> setIOSGeTuiLocalBadge(int badge) async {
 
 /// only ios
 Future<Map<dynamic, dynamic>?> getIOSGeTuiLaunchNotification() async {
-  if (Platform.isIOS)
-    return await _channel.invokeMethod('getLaunchNotification');
+  if (_isIOS) return await _channel.invokeMethod('getLaunchNotification');
   return null;
 }
 
@@ -168,6 +173,7 @@ void addGeTuiEventHandler({
   /// ios 收到VoIP消息
   EventHandlerMap? onReceiveVoIpPayLoad,
 }) {
+  if (!_supportPlatform) return;
   _channel.setMethodCallHandler((MethodCall call) async {
     switch (call.method) {
       case 'onReceiveOnlineState':
@@ -307,3 +313,13 @@ class _AlertModel {
   String? title;
   String? body;
 }
+
+bool get _supportPlatform {
+  if (!kIsWeb && (_isAndroid || _isIOS)) return true;
+  print('not support Platform');
+  return false;
+}
+
+bool get _isAndroid => defaultTargetPlatform == TargetPlatform.android;
+
+bool get _isIOS => defaultTargetPlatform == TargetPlatform.iOS;
