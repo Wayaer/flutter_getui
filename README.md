@@ -111,7 +111,7 @@ import 'package:flutter_getui/flutter_getui.dart';
 
 ```
 
-### - 初始化个推sdk
+- 初始化个推sdk
 
 ```dart
    void main(){
@@ -122,7 +122,7 @@ import 'package:flutter_getui/flutter_getui.dart';
     }
 ```
 
-### - 公用 API
+- 公用 API
 ```dart
     ///   0：成功
     ///   10099：SDK 未初始化成功
@@ -195,7 +195,7 @@ import 'package:flutter_getui/flutter_getui.dart';
 
 
 ```
-### - Android APi
+- Android API
 ```dart
      ///  停止SDK服务
 
@@ -215,7 +215,7 @@ import 'package:flutter_getui/flutter_getui.dart';
 
 ```
 
-### iOS API
+- iOS API
 
 ```dart
      ///  同步服务端角标
