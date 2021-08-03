@@ -16,7 +16,8 @@ A new Flutter plugin.
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   s.dependency 'GTSDK'
-  s.ios.deployment_target = '8.0'
+  s.platform = :ios, '10.0'
   s.static_framework = true
+  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
 end
 

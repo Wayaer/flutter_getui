@@ -1,3 +1,6 @@
+## [2.0.0]
+ * add Singleton Pattern
+ * upgrade Android Gradle
 ## [1.2.1]
  * upgrade Android GeTui SDK version
  * add platform restrictions
