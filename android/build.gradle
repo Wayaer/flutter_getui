@@ -1,6 +1,7 @@
 group 'fl.getui'
 version '1.0'
 buildscript {
+    ext.kotlin_version = '1.5.30'
     repositories {
         google()
         mavenCentral()
@@ -15,7 +16,8 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.0'
+        classpath 'com.android.tools.build:gradle:7.0.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.huawei.agconnect:agcp:1.4.2.300'
     }
 }
@@ -44,7 +46,7 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
     defaultConfig {
-        minSdkVersion 17
+        minSdkVersion 21
         consumerProguardFiles 'consumer-rules.pro'
     }
     packagingOptions {
@@ -76,8 +78,7 @@ dependencies {
         exclude group: 'com.getui', module: 'sdk'
     }
     implementation 'com.huawei.hms:push:5.0.4.302'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.21"
-
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 repositories {
     mavenCentral()

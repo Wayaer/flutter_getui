@@ -5,13 +5,14 @@ import android.os.Handler
 import android.os.Looper
 import com.igexin.sdk.GTIntentService
 import com.igexin.sdk.PushManager
+import com.igexin.sdk.PushService
 import com.igexin.sdk.Tag
 import com.igexin.sdk.message.GTCmdMessage
 import com.igexin.sdk.message.GTNotificationMessage
 import com.igexin.sdk.message.GTTransmitMessage
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodChannel
-import java.util.HashMap
+import java.util.*
 
 
 class GeTuiPlugin : FlutterPlugin {
@@ -33,7 +34,9 @@ class GeTuiPlugin : FlutterPlugin {
                     PushManager.getInstance().checkManifest(context)
                     result.success(true)
                 }
-                "getClientId" -> result.success(PushManager.getInstance().getClientid(context))
+                "getClientId" -> result.success(
+                    PushManager.getInstance().getClientid(context)
+                )
                 "startPush" -> {
                     PushManager.getInstance().turnOnPush(context)
                     result.success(true)
@@ -42,7 +45,9 @@ class GeTuiPlugin : FlutterPlugin {
                     PushManager.getInstance().turnOffPush(context)
                     result.success(true)
                 }
-                "isPushTurnedOn" -> result.success(PushManager.getInstance().isPushTurnedOn(context))
+                "isPushTurnedOn" -> result.success(
+                    PushManager.getInstance().isPushTurnedOn(context)
+                )
                 "bindAlias" -> {
                     val status = PushManager.getInstance().bindAlias(
                         context,
@@ -53,7 +58,8 @@ class GeTuiPlugin : FlutterPlugin {
                 "unbindAlias" -> {
                     var isSelf = call.argument<Boolean>("isSelf")
                     if (isSelf == null) isSelf = false
-                    val status = PushManager.getInstance().unBindAlias(context, call.argument("alias"), isSelf)
+                    val status = PushManager.getInstance()
+                        .unBindAlias(context, call.argument("alias"), isSelf)
                     result.success(status)
                 }
                 "setTag" -> {
@@ -66,13 +72,17 @@ class GeTuiPlugin : FlutterPlugin {
                             tag.name = tags[i]
                             tagArray[i] = tag
                         }
-                        result.success(PushManager.getInstance().setTag(context, tagArray, sn))
+                        result.success(
+                            PushManager.getInstance()
+                                .setTag(context, tagArray, sn)
+                        )
                     } else {
                         result.success(1)
                     }
                 }
                 "setBadge" -> {
-                    val status = PushManager.getInstance().setHwBadgeNum(context, call.arguments as Int)
+                    val status = PushManager.getInstance()
+                        .setHwBadgeNum(context, call.arguments as Int)
                     result.success(status)
                 }
                 else -> result.notImplemented()
@@ -101,7 +111,10 @@ class GeTuiPlugin : FlutterPlugin {
         }
 
         // 处理透传消息
-        override fun onReceiveMessageData(context: Context, msg: GTTransmitMessage) {
+        override fun onReceiveMessageData(
+            context: Context,
+            msg: GTTransmitMessage
+        ) {
             val data: MutableMap<String?, Any?> = HashMap()
             data["messageId"] = msg.messageId
             data["payload"] = String(msg.payload)
@@ -118,12 +131,18 @@ class GeTuiPlugin : FlutterPlugin {
         }
 
         // 各种事件处理回执
-        override fun onReceiveCommandResult(context: Context, gtCmdMessage: GTCmdMessage) {
+        override fun onReceiveCommandResult(
+            context: Context,
+            gtCmdMessage: GTCmdMessage
+        ) {
 
         }
 
         // 通知到达，只有个推通道下发的通知会回调此方法
-        override fun onNotificationMessageArrived(context: Context, message: GTNotificationMessage) {
+        override fun onNotificationMessageArrived(
+            context: Context,
+            message: GTNotificationMessage
+        ) {
             val data: MutableMap<String?, Any?> = HashMap()
             data["messageId"] = message.messageId
             data["taskId"] = message.taskId
@@ -135,7 +154,10 @@ class GeTuiPlugin : FlutterPlugin {
         }
 
         // 通知点击，只有个推通道下发的通知会回调此方法
-        override fun onNotificationMessageClicked(context: Context, message: GTNotificationMessage) {
+        override fun onNotificationMessageClicked(
+            context: Context,
+            message: GTNotificationMessage
+        ) {
             val data: MutableMap<String?, Any?> = HashMap()
             data["messageId"] = message.messageId
             data["taskId"] = message.taskId
@@ -156,4 +178,6 @@ class GeTuiPlugin : FlutterPlugin {
         }
 
     }
+
+    class GTPushService : PushService()
 }

@@ -27,14 +27,13 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
 
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
     lintOptions {
-        checkReleaseBuilds false
         disable 'InvalidPackage'
     }
     signingConfigs {
@@ -48,7 +47,7 @@ android {
     defaultConfig {
         applicationId "com.getui.example"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         manifestPlaceholders = [

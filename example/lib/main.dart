@@ -5,7 +5,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   /// 初始化
-  final bool status = await FlGeTui.instance
+  final bool status = await FlGeTui()
       .init(appId: 'appid', appKey: 'appKey', appSecret: 'appSecret');
   print('是否初始化成功 = $status');
 
@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> initPush() async {
-    FlGeTui.instance.addEventHandler(
+    FlGeTui().addEventHandler(
       onReceiveOnlineState: (bool? state) {
         text = 'Android Push online Status $state';
         setState(() {});
@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> getLaunchNotification() async {
     final Map<dynamic, dynamic>? info =
-        await FlGeTui.instance.getLaunchNotificationWithIOS();
+        await FlGeTui().getLaunchNotificationWithIOS();
     print(info);
   }
 
@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
               children: <Widget>[
                 ElevatedButton(
                     onPressed: () async {
-                      final String? cid = await FlGeTui.instance.getClientID();
+                      final String? cid = await FlGeTui().getClientID();
                       text = 'getClientID: $cid';
                       print(cid);
                       setState(() {});
@@ -103,8 +103,8 @@ class _HomePageState extends State<HomePage> {
                     child: const Text('getClientID')),
                 ElevatedButton(
                     onPressed: () async {
-                      final int? status = await FlGeTui.instance
-                          .setTag(<String>['test1', 'test2']);
+                      final int? status =
+                          await FlGeTui().setTag(<String>['test1', 'test2']);
                       if (status == null) return;
                       text = 'setTag  code=$status';
                       setState(() {});
@@ -112,8 +112,7 @@ class _HomePageState extends State<HomePage> {
                     child: const Text('setTag')),
                 ElevatedButton(
                     onPressed: () async {
-                      final bool? status =
-                          await FlGeTui.instance.bindAlias('test');
+                      final bool? status = await FlGeTui().bindAlias('test');
                       if (status == null) return;
                       text = 'bindAlias  $status';
                       setState(() {});
@@ -121,8 +120,7 @@ class _HomePageState extends State<HomePage> {
                     child: const Text('bindAlias')),
                 ElevatedButton(
                     onPressed: () async {
-                      final bool? status =
-                          await FlGeTui.instance.unbindAlias('test');
+                      final bool? status = await FlGeTui().unbindAlias('test');
                       if (status == null) return;
                       text = 'unbindAlias  $status';
                       setState(() {});
@@ -130,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                     child: const Text('unbindAlias')),
                 ElevatedButton(
                     onPressed: () async {
-                      final bool status = await FlGeTui.instance.setBadge(10);
+                      final bool status = await FlGeTui().setBadge(10);
                       text = 'setBadge  $status';
                       setState(() {});
                     },
@@ -148,15 +146,14 @@ class _HomePageState extends State<HomePage> {
                 ElevatedButton(
                     onPressed: () async {
                       final bool status =
-                          await FlGeTui.instance.startPushWithAndroid();
+                          await FlGeTui().startPushWithAndroid();
                       text = 'startPushWithAndroid  $status';
                       setState(() {});
                     },
                     child: const Text('start push')),
                 ElevatedButton(
                     onPressed: () async {
-                      final bool status =
-                          await FlGeTui.instance.stopPushWithAndroid();
+                      final bool status = await FlGeTui().stopPushWithAndroid();
                       text = 'stopPushWithAndroid  $status';
                       setState(() {});
                     },
@@ -164,7 +161,7 @@ class _HomePageState extends State<HomePage> {
                 ElevatedButton(
                     onPressed: () async {
                       final bool status =
-                          await FlGeTui.instance.getPushStatusWithAndroid();
+                          await FlGeTui().getPushStatusWithAndroid();
                       text = 'getPushStatusWithAndroid  $status';
                       setState(() {});
                     },
@@ -183,17 +180,17 @@ class _HomePageState extends State<HomePage> {
                     onPressed: getLaunchNotification,
                     child: const Text('getLaunchNotificationWithIOS')),
                 ElevatedButton(
-                    onPressed: () => FlGeTui.instance.resetBadgeWithIOS(),
+                    onPressed: () => FlGeTui().resetBadgeWithIOS(),
                     child: const Text('resetBadgeWithIOS')),
                 ElevatedButton(
                     onPressed: () async {
-                      await FlGeTui.instance.setLocalBadgeWithIOS(5);
+                      await FlGeTui().setLocalBadgeWithIOS(5);
                       text = 'setLocalBadgeWithIOS = 5';
                     },
                     child: const Text('setLocalBadge(5)')),
                 ElevatedButton(
                     onPressed: () async {
-                      await FlGeTui.instance.setLocalBadgeWithIOS(0);
+                      await FlGeTui().setLocalBadgeWithIOS(0);
                       text = 'setLocalBadgeWithIOS = 0';
                     },
                     child: const Text('setLocalBadge(0)')),

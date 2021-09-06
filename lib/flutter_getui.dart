@@ -9,18 +9,14 @@ typedef EventHandlerMap = void Function(Map<dynamic, dynamic>? event);
 typedef EventHandlerMessageModel = void Function(GTMessageModel? message);
 
 class FlGeTui {
-  factory FlGeTui() => _getInstance();
-
-  FlGeTui._internal();
-
-  static FlGeTui get instance => _getInstance();
-
-  static FlGeTui? _instance;
-
-  static FlGeTui _getInstance() {
-    _instance ??= FlGeTui._internal();
-    return _instance!;
+  factory FlGeTui() {
+    _singleton ??= FlGeTui._();
+    return _singleton!;
   }
+
+  FlGeTui._();
+
+  static FlGeTui? _singleton;
 
   final MethodChannel _channel = const MethodChannel('ge_tui');
 

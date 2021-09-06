@@ -119,7 +119,7 @@ import 'package:flutter_getui/flutter_getui.dart';
 ```dart
 Future<void> main() async {
   /// 初始化
-  final bool status = await FlGeTui.instance
+  final bool status = await FlGeTui()
       .init(appId: 'appid', appKey: 'appKey', appSecret: 'appSecret');
   print('是否初始化成功 = $status');
 }
@@ -145,9 +145,9 @@ void fun() {
   ///  @param alias 别名字符串
   ///  @param aSn   绑定序列码, Android中无效，仅在iOS有效
 
-  FlGeTui.instance.bindAlias(alias, sn);
+  FlGeTui().bindAlias(alias, sn);
 
-  FlGeTui.instance.unbindAlias(alias, sn);
+  FlGeTui().unbindAlias(alias, sn);
 
   /// 给用户打标签 , 后台可以根据标签进行推送
   /// @param tags 别名数组
@@ -168,10 +168,10 @@ void fun() {
   ///    20010：已存 tag 数目超限
   ///    20011：tag 内容格式不正确 *
 
-  FlGeTui.instance.setTag(tags);
+  FlGeTui().setTag(tags);
 
   Future<void> initPush() async {
-    FlGeTui.instance.addEventHandler(
+    FlGeTui().addEventHandler(
       onReceiveOnlineState: (bool? state) {
         text = 'Android Push online Status $state';
       },
@@ -208,19 +208,19 @@ void fun() {
 void fun() {
   ///  停止SDK服务
 
-  FlGeTui.instance.stopPushWithAndroid();
+  FlGeTui().stopPushWithAndroid();
 
   ///  开启SDK服务
-  FlGeTui.instance.startPushWithAndroid();
+  FlGeTui().startPushWithAndroid();
 
   ///  检查集成结果
-  FlGeTui.instance.getPushStatusWithAndroid();
+  FlGeTui().getPushStatusWithAndroid();
 
   ///  检测android 推送服务状态
-  FlGeTui.instance.getPushStatusWithAndroid();
+  FlGeTui().getPushStatusWithAndroid();
 
   /// 设置 badge 仅支持华为
-  FlGeTui.instance.setBadge();
+  FlGeTui().setBadge();
 }
 ```
 
@@ -229,19 +229,19 @@ void fun() {
 ```dart
 void fun() {
   ///  同步服务端角标
-  FlGeTui.instance.setBadge(badge);
+  FlGeTui().setBadge(badge);
 
   ///  复位服务端角标
-  FlGeTui.instance.resetBadgeWithIOS();
+  FlGeTui().resetBadgeWithIOS();
 
   ///  同步App本地角标
-  FlGeTui.instance.setLocalBadgeWithIOS(badge);
+  FlGeTui().setLocalBadgeWithIOS(badge);
 
   ///  获取冷启动Apns参数
-  FlGeTui.instance.getLaunchNotificationWithIOS();
+  FlGeTui().getLaunchNotificationWithIOS();
 
   ///  注册 voip 推送服务
-  FlGeTui.instance.voIpRegistrationForIOS();
+  FlGeTui().voIpRegistrationForIOS();
 }
 ```
 
