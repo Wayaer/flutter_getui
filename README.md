@@ -23,28 +23,30 @@ Android 可选权限 在 `/android/app/src/main/AndroidManifest.xml` 中添加�
 在 `/android/app/build.gradle` 中添加下列代码：
 
 ```groovy
-android:
-{
+android:{
 
     defaultConfig {
         applicationId ""
-
         manifestPlaceholders = [
-                GETUI_PKGNAME : applicationId,
-                GETUI_APPID     : "USER_APP_ID",
-                GETUI_APP_KEY   : "USER_APP_KEY",
-                GETUI_APP_SECRET: "USER_APP_SECRET",
-                // 下面是多厂商配置，如需要开通使用请联系技术支持
-                // 如果不需要使用，预留空字段即可
-                XIAOMI_APP_ID   : "",
-                XIAOMI_APP_KEY  : "",
-                MEIZU_APP_ID    : "",
-                MEIZU_APP_KEY   : "",
-                HUAWEI_APP_ID   : "",
-                OPPO_APP_KEY    : "",
-                OPPO_APP_SECRET : "",
-                VIVO_APP_ID     : "",
-                VIVO_APP_KEY    : ""
+                GETUI_APPID     : "cy0d7CICux7YKvteM5cy87",
+                // 华为 相关应用参数
+                HUAWEI_APP_ID  : "",
+
+                // 小米相关应用参数
+                XIAOMI_APP_ID  : "",
+                XIAOMI_APP_KEY : "",
+
+                // OPPO 相关应用参数
+                OPPO_APP_KEY   : "",
+                OPPO_APP_SECRET: "",
+
+                // VIVO 相关应用参数
+                VIVO_APP_ID    : "",
+                VIVO_APP_KEY   : "",
+
+                // 魅族相关应用参数
+                MEIZU_APP_ID   : "",
+                MEIZU_APP_KEY  : ""
         ]
     }
 }

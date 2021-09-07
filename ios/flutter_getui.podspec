@@ -13,7 +13,6 @@ A new Flutter plugin.
   s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
-  s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   s.dependency 'GTSDK'
   s.platform = :ios, '10.0'

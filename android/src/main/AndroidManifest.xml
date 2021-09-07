@@ -19,17 +19,16 @@
             android:name="GETUI_APPID"
             android:value="${GETUI_APPID}" />
         <!-- 用户自定义服务继承自GTIntentService,作为SDK与APP桥梁服务,用来接收各种消息和命令回复-->
-<!--        <service-->
-        <!--            android:name="fl.getui.GeTuiPlugin$IntentService"-->
-        <!--            android:exported="false"-->
-        <!--            android:permission="android.permission.BIND_JOB_SERVICE" />-->
-        <!--        &lt;!&ndash; 配置SDK核心服务 &ndash;&gt;-->
-        <!--        <service-->
-        <!--            android:name="fl.getui.GeTuiPlugin$GTPushService"-->
-        <!--            android:exported="true"-->
-        <!--            android:label="PushService"-->
-        <!--            android:process=":pushservice"-->
-        <!--            tools:ignore="ExportedService" />-->
-
+        <service
+            android:name="fl.getui.GeTuiPlugin$IntentService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <!-- 配置SDK核心服务 -->
+        <service
+            android:name="fl.getui.GeTuiPlugin$GTPushService"
+            android:exported="true"
+            android:label="PushService"
+            android:process=":pushservice"
+            tools:ignore="ExportedService" />
     </application>
 </manifest>
