@@ -52,15 +52,24 @@ android {
         versionName flutterVersionName
         manifestPlaceholders = [
                 GETUI_APPID     : "cy0d7CICux7YKvteM5cy87",
-                XIAOMI_APP_ID    : "",
-                XIAOMI_APP_KEY  : "",
-                MEIZU_APP_ID    : "",
-                MEIZU_APP_KEY   : "",
-                HUAWEI_APP_ID   : "",
-                OPPO_APP_KEY    : "",
-                OPPO_APP_SECRET : "",
-                VIVO_APP_ID     : "",
-                VIVO_APP_KEY    : ""
+                // 华为 相关应用参数
+                HUAWEI_APP_ID  : "",
+
+                // 小米相关应用参数
+                XIAOMI_APP_ID  : "",
+                XIAOMI_APP_KEY : "",
+
+                // OPPO 相关应用参数
+                OPPO_APP_KEY   : "",
+                OPPO_APP_SECRET: "",
+
+                // VIVO 相关应用参数
+                VIVO_APP_ID    : "",
+                VIVO_APP_KEY   : "",
+
+                // 魅族相关应用参数
+                MEIZU_APP_ID   : "",
+                MEIZU_APP_KEY  : ""
         ]
     }
 

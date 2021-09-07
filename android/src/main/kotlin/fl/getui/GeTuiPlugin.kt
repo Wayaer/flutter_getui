@@ -102,12 +102,10 @@ class GeTuiPlugin : FlutterPlugin {
         private val handle = Handler(Looper.getMainLooper())
 
         override fun onReceiveServicePid(context: Context, pid: Int) {
-
         }
 
         // 接收 cid
         override fun onReceiveClientId(context: Context, clientid: String) {
-
         }
 
         // 处理透传消息
@@ -135,7 +133,6 @@ class GeTuiPlugin : FlutterPlugin {
             context: Context,
             gtCmdMessage: GTCmdMessage
         ) {
-
         }
 
         // 通知到达，只有个推通道下发的通知会回调此方法
@@ -174,9 +171,7 @@ class GeTuiPlugin : FlutterPlugin {
             handle.post {
                 channel.invokeMethod("onReceiveDeviceToken", token)
             }
-
         }
-
     }
 
     class GTPushService : PushService()

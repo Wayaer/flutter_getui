@@ -2,45 +2,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="fl.getui">
 
-    <!-- 网络连接 -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- 获取手机状态参数，并作为生成个推唯一标识的必要参数 -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <!-- 查看网络状态，sdk重连机制等需要使用 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- 查看wifi连接状态 -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <!-- 开机自启动权限，提升sdk活跃，保障触达 -->
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <!-- 写sd卡权限，做数据备份 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- 震动权限 -->
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <!-- 获取任务信息，目的是防止sdk被频繁唤醒 -->
-    <uses-permission android:name="android.permission.GET_TASKS" />
+    <!-- iBeancon 功能所需权限 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <!-- 个推电子围栏功能所需权限 -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <uses-permission android:name="getui.permission.GetuiService.${applicationId}" />
-
-    <permission
-        android:name="getui.permission.GetuiService.${applicationId}"
-        android:protectionLevel="normal" />
 
     <application
-        android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        
-        <!-- 用户自定义服务继承自GTIntentService,作为SDK与APP桥梁服务,用来接收各种消息和命令回复 -->
-        <service
-            android:name="fl.getui.GeTuiPlugin$IntentService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <!-- 配置SDK核心服务 -->
-        <service
-            android:name="fl.getui.GeTuiPlugin$GTPushService"
-            android:exported="false"
-            android:label="PushService"
-            android:process=":pushservice" />
+
+        <meta-data
+            android:name="GETUI_APPID"
+            android:value="${GETUI_APPID}" />
+        <!-- 用户自定义服务继承自GTIntentService,作为SDK与APP桥梁服务,用来接收各种消息和命令回复-->
+<!--        <service-->
+        <!--            android:name="fl.getui.GeTuiPlugin$IntentService"-->
+        <!--            android:exported="false"-->
+        <!--            android:permission="android.permission.BIND_JOB_SERVICE" />-->
+        <!--        &lt;!&ndash; 配置SDK核心服务 &ndash;&gt;-->
+        <!--        <service-->
+        <!--            android:name="fl.getui.GeTuiPlugin$GTPushService"-->
+        <!--            android:exported="true"-->
+        <!--            android:label="PushService"-->
+        <!--            android:process=":pushservice"-->
+        <!--            tools:ignore="ExportedService" />-->
 
     </application>
 </manifest>

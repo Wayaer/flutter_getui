@@ -30,6 +30,7 @@ android:
         applicationId ""
 
         manifestPlaceholders = [
+                GETUI_PKGNAME : applicationId,
                 GETUI_APPID     : "USER_APP_ID",
                 GETUI_APP_KEY   : "USER_APP_KEY",
                 GETUI_APP_SECRET: "USER_APP_SECRET",
