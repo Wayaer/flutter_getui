@@ -17,6 +17,8 @@ A new Flutter plugin.
   s.dependency 'GTSDK'
   s.platform = :ios, '10.0'
   s.static_framework = true
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
+ # Flutter.framework does not contain a i386 slice.
+  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
+
 end
 
