@@ -9,13 +9,11 @@ buildscript {
             allowInsecureProtocol = true
             url 'http://mvn.gt.getui.com/nexus/content/repositories/releases/'
         }
-        maven { url 'https://developer.huawei.com/repo/' }
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.huawei.agconnect:agcp:1.4.2.300'
     }
 }
 rootProject.allprojects {
@@ -26,13 +24,11 @@ rootProject.allprojects {
             allowInsecureProtocol = true
             url 'http://mvn.gt.getui.com/nexus/content/repositories/releases/'
         }
-        maven { url 'https://developer.huawei.com/repo/' }
     }
 }
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.huawei.agconnect'
 
 android {
     compileSdkVersion 31
@@ -44,43 +40,18 @@ android {
         minSdkVersion 21
         consumerProguardFiles 'consumer-rules.pro'
     }
-//    packagingOptions {
-//        merge 'AndroidManifest.xml'
-//        merge 'R.txt'
-//        merge 'classes.jar'
-//        merge 'proguard.txt'
-//    }
+    packagingOptions {
+        merge 'AndroidManifest.xml'
+        merge 'R.txt'
+        merge 'classes.jar'
+        merge 'proguard.txt'
+    }
 
 }
 
 dependencies {
     implementation 'com.getui:gtsdk:3.2.3.0'
     implementation 'com.getui:gtc:3.1.4.0'
-
-    // 根据所需厂商选择集成
-    implementation 'com.getui.opt:hwp:3.1.0'   // 华为
-    implementation 'com.getui.opt:xmp:3.0.2'   // 小米
-    implementation 'com.assist-v3:oppo:3.0.3'  // oppo
-    implementation 'com.assist-v3:vivo:3.0.3'  // vivo
-    implementation 'com.getui.opt:mzp:3.0.2'   // 魅族
-    implementation 'com.getui.opt:ups:3.0.2'   // ups，ups目前支持坚果，索尼，海信手机
-
-//    implementation('com.getui.opt:hwp:3.1.0') {
-//        exclude group: 'com.getui', module: 'sdk'
-//    }
-//    implementation('com.getui.opt:mzp:3.0.2') {
-//        exclude group: 'com.getui', module: 'sdk'
-//    }
-//    implementation('com.assist-v3:oppo:3.0.2') {
-//        exclude group: 'com.getui', module: 'sdk'
-//    }
-//    implementation('com.assist-v3:vivo:3.0.3') {
-//        exclude group: 'com.getui', module: 'sdk'
-//    }
-//    implementation('com.getui.opt:xmp:3.0.2') {
-//        exclude group: 'com.getui', module: 'sdk'
-//    }
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 repositories {
