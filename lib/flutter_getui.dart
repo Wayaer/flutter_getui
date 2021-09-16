@@ -192,23 +192,26 @@ class FlGeTui {
           if (onReceiveMessageData == null) return;
           final Map<dynamic, dynamic>? map =
               call.arguments as Map<dynamic, dynamic>?;
-          if (map != null)
+          if (map != null) {
             return onReceiveMessageData(GTMessageModel.fromJson(map));
+          }
           return onReceiveMessageData(null);
         case 'onNotificationMessageArrived':
           if (onNotificationMessageArrived == null) return;
           final Map<dynamic, dynamic>? map =
               call.arguments as Map<dynamic, dynamic>?;
-          if (map != null)
+          if (map != null) {
             return onNotificationMessageArrived(GTMessageModel.fromJson(map));
+          }
           return onNotificationMessageArrived(null);
 
         case 'onNotificationMessageClicked':
           if (onNotificationMessageClicked == null) return;
           final Map<dynamic, dynamic>? map =
               call.arguments as Map<dynamic, dynamic>?;
-          if (map != null)
+          if (map != null) {
             return onNotificationMessageClicked(GTMessageModel.fromJson(map));
+          }
           return onNotificationMessageClicked(null);
 
         case 'onReceiveDeviceToken':
@@ -326,7 +329,7 @@ class _AlertModel {
 
 bool get _supportPlatform {
   if (!kIsWeb && (_isAndroid || _isIOS)) return true;
-  print('Not support platform for $defaultTargetPlatform');
+  debugPrint('Not support platform for $defaultTargetPlatform');
   return false;
 }
 

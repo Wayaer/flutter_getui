@@ -7,13 +7,15 @@ Future<void> main() async {
   /// 初始化
   final bool status = await FlGeTui()
       .init(appId: 'appid', appKey: 'appKey', appSecret: 'appSecret');
-  print('是否初始化成功 = $status');
+  debugPrint('是否初始化成功 = $status');
 
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
       debugShowCheckedModeBanner: false, title: '个推', home: HomePage()));
 }
 
 class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -36,22 +38,22 @@ class _HomePageState extends State<HomePage> {
       },
       onReceiveMessageData: (GTMessageModel? msg) async {
         text = 'onReceiveMessageData ${msg?.toMap ?? 'null'}';
-        print('onReceiveMessageData ${msg?.toMap ?? 'null'}');
+        debugPrint('onReceiveMessageData ${msg?.toMap ?? 'null'}');
         setState(() {});
       },
       onNotificationMessageArrived: (GTMessageModel? msg) async {
         text = 'onNotificationMessageArrived ${msg?.toMap ?? 'null'}';
-        print('onNotificationMessageArrived ${msg?.toMap ?? 'null'}');
+        debugPrint('onNotificationMessageArrived ${msg?.toMap ?? 'null'}');
         setState(() {});
       },
       onNotificationMessageClicked: (GTMessageModel? msg) async {
         text = 'onNotificationMessageClicked ${msg?.toMap ?? 'null'}';
-        print('onNotificationMessageClicked ${msg?.toMap ?? 'null'}');
+        debugPrint('onNotificationMessageClicked ${msg?.toMap ?? 'null'}');
         setState(() {});
       },
       onReceiveDeviceToken: (String? token) {
         text = 'onReceiveDeviceToken $token';
-        print('onReceiveDeviceToken $token');
+        debugPrint('onReceiveDeviceToken $token');
         setState(() {});
       },
       onAppLinkPayload: (String? message) {
@@ -72,7 +74,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> getLaunchNotification() async {
     final Map<dynamic, dynamic>? info =
         await FlGeTui().getLaunchNotificationWithIOS();
-    print(info);
+    debugPrint(info.toString());
   }
 
   @override
@@ -97,7 +99,7 @@ class _HomePageState extends State<HomePage> {
                     onPressed: () async {
                       final String? cid = await FlGeTui().getClientID();
                       text = 'getClientID: $cid';
-                      print(cid);
+                      debugPrint(cid);
                       setState(() {});
                     },
                     child: const Text('getClientID')),
