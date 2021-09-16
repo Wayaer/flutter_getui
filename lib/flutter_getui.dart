@@ -9,10 +9,7 @@ typedef EventHandlerMap = void Function(Map<dynamic, dynamic>? event);
 typedef EventHandlerMessageModel = void Function(GTMessageModel? message);
 
 class FlGeTui {
-  factory FlGeTui() {
-    _singleton ??= FlGeTui._();
-    return _singleton!;
-  }
+  factory FlGeTui() => _singleton ??= FlGeTui._();
 
   FlGeTui._();
 
