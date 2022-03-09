@@ -51,7 +51,7 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         manifestPlaceholders = [
-                GETUI_APPID     : "cy0d7CICux7YKvteM5cy87",
+                GETUI_APPID    : "cy0d7CICux7YKvteM5cy87",
                 // 华为 相关应用参数
                 HUAWEI_APP_ID  : "",
 
