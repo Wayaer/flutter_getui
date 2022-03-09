@@ -14,10 +14,6 @@
     <application
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-
-        <meta-data
-            android:name="GETUI_APPID"
-            android:value="${GETUI_APPID}" />
         <!-- 用户自定义服务继承自GTIntentService,作为SDK与APP桥梁服务,用来接收各种消息和命令回复-->
         <service
             android:name="fl.getui.GeTuiPlugin$IntentService"
