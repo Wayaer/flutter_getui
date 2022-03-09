@@ -48,8 +48,8 @@ android {
 }
 
 dependencies {
-    implementation 'com.getui:gtsdk:3.2.3.0'
-    implementation 'com.getui:gtc:3.1.4.0'
+    implementation 'com.getui:gtsdk:3.2.8.0'
+    implementation 'com.getui:gtc:3.1.7.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 repositories {
