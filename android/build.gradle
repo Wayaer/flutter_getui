@@ -1,18 +1,17 @@
 group 'fl.getui'
 version '1.0'
 buildscript {
-    ext.kotlin_version = '1.5.30'
+    ext.kotlin_version = '1.6.10'
     repositories {
         google()
         mavenCentral()
         maven {
-            allowInsecureProtocol = true
-            url 'http://mvn.gt.getui.com/nexus/content/repositories/releases/'
+            url "https://mvn.getui.com/nexus/content/repositories/releases/"
         }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.2'
+        classpath 'com.android.tools.build:gradle:7.0.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -21,8 +20,7 @@ rootProject.allprojects {
         mavenCentral()
         google()
         maven {
-            allowInsecureProtocol = true
-            url 'http://mvn.gt.getui.com/nexus/content/repositories/releases/'
+            url "https://mvn.getui.com/nexus/content/repositories/releases/"
         }
     }
 }
@@ -50,8 +48,8 @@ android {
 }
 
 dependencies {
-    implementation 'com.getui:gtsdk:3.2.3.0'
-    implementation 'com.getui:gtc:3.1.4.0'
+    implementation 'com.getui:gtsdk:3.2.8.0'
+    implementation 'com.getui:gtc:3.1.7.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 repositories {
