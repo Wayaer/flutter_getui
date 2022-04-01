@@ -8,6 +8,7 @@
 
 @interface  GeTuiPlugin()<GeTuiSdkDelegate,UNUserNotificationCenterDelegate,PKPushRegistryDelegate> {
     NSDictionary *_launchNotification;
+    NSDictionary *_launchOptions;
 }
 
 @end
@@ -70,9 +71,9 @@
 }
 
 - (void)initSDK:(FlutterMethodCall*)call result:(FlutterResult)result {
-    NSDictionary *ConfigurationInfo = call.arguments;
+    NSDictionary *args = call.arguments;
     // [ GTSdk ]：使用APPID/APPKEY/APPSECRENT启动个推
-    [GeTuiSdk startSdkWithAppId:ConfigurationInfo[@"appId"] appKey:ConfigurationInfo[@"appKey"] appSecret:ConfigurationInfo[@"appSecret"] delegate:self];
+    [GeTuiSdk startSdkWithAppId:args[@"appId"] appKey:args[@"appKey"] appSecret:args[@"appSecret"] delegate:self launchingOptions:_launchOptions];
     if (@available(iOS 10.0, *)) {
         [GeTuiSdk registerRemoteNotification:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge)];
         result(@(YES));
@@ -85,7 +86,7 @@
 #pragma mark - AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
+    _launchOptions = launchOptions;
     if (launchOptions != nil)
         _launchNotification = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
     
@@ -124,7 +125,7 @@
 /// @param response UNNotificationResponse（iOS10及以上版本）
 /// @param completionHandler 用来在后台状态下进行操作（iOS10以下版本）
 - (void)GeTuiSdkDidReceiveNotification:(NSDictionary *)userInfo notificationCenter:(UNUserNotificationCenter *)center response:(UNNotificationResponse *)response fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler  API_AVAILABLE(ios(10.0)){
-   [_channel invokeMethod:@"onNotificationMessageClicked" arguments:userInfo];
+    [_channel invokeMethod:@"onNotificationMessageClicked" arguments:userInfo];
     // [ GTSdk ]：将收到的APNs信息传给个推统计
     [GeTuiSdk handleRemoteNotification:response.notification.request.content.userInfo];
     if(completionHandler) {
