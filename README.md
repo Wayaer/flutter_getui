@@ -9,12 +9,13 @@
 在 `/android/app/build.gradle` 中添加下列代码：
 
 ```groovy
-android:{
+android:
+{
 
     defaultConfig {
         applicationId ""
         manifestPlaceholders = [
-                GETUI_APPID     : "cy0d7CICux7YKvteM5cy87",
+                GETUI_APPID    : "cy0d7CICux7YKvteM5cy87",
                 // 华为 相关应用参数
                 HUAWEI_APP_ID  : "",
 
@@ -62,8 +63,7 @@ android:{
 
 #### - 配置相应依赖
 
-1.配置签名信息：将步骤一【创建华为应用】中官方文档**生成签名证书指纹步骤中生成的签名文件拷贝到工程的 app 目录下**，在 app/build
-.gradle 文件中配置签名。如下（具体请根据您当前项目的配置修改）：
+1.配置签名信息：将步骤一【创建华为应用】中官方文档**生成签名证书指纹步骤中生成的签名文件拷贝到工程的 app 目录下**，在 app/build .gradle 文件中配置签名。如下（具体请根据您当前项目的配置修改）：
 
 ```
 signingConfigs {
@@ -86,15 +86,13 @@ signingConfigs {
 
 ##### iOS:
 
-1. 必须开启Push Notification能力。找到应用Target设置中的Signing & Capabilities，点击左上角
-   +Capability 添加。如果没有开启该开关，应用将获取不到DeviceToken
+1. 必须开启Push Notification能力。找到应用Target设置中的Signing & Capabilities，点击左上角 +Capability 添加。如果没有开启该开关，应用将获取不到DeviceToken
 
 2. 为了更好支持消息推送，提供更多的推送样式，提高消息到达率，需要配置后台运行权限：
 
 并保证"Background Modes"中的"Remote notifications"处于选中状态
 
-3. 使用NotificationService，同样开启Access WiFi Information设置。 + Capability 添加 "Push
-   Notifications"
+3. 使用NotificationService，同样开启Access WiFi Information设置。 + Capability 添加 "Push Notifications"
 
 ### 使用
 
@@ -141,7 +139,6 @@ void fun() {
   /// 给用户打标签 , 后台可以根据标签进行推送
   /// @param tags 别名数组
 
-
   ///   code 值说明
   ///     0：成功
   ///    10099：SDK 未初始化成功
@@ -165,28 +162,46 @@ void fun() {
         text = 'Android Push online Status $state';
       },
       onReceiveMessageData: (GTMessageModel? msg) async {
-        print('onReceiveMessageData ${msg?.toMap ?? 'null'}');
+        print('onReceiveMessageData ${msg?.toMap() ?? 'null'}');
       },
       onNotificationMessageArrived: (GTMessageModel? msg) async {
-        print('onNotificationMessageArrived ${msg?.toMap ?? 'null'}');
+        print('onNotificationMessageArrived ${msg?.toMap() ?? 'null'}');
       },
       onNotificationMessageClicked: (GTMessageModel? msg) async {
-        print('onNotificationMessageClicked ${msg?.toMap ?? 'null'}');
+        print('onNotificationMessageClicked ${msg?.toMap() ?? 'null'}');
       },
       onReceiveDeviceToken: (String? token) {
         print('onReceiveDeviceToken $token');
       },
       onAppLinkPayload: (String? message) {
-        text = 'onAppLinkPayload $message';
+        debugPrint('onAppLinkPayload $message');
       },
       onRegisterVoIpToken: (String? message) {
-        text = 'onRegisterVoIpToken $message';
+        debugPrint('onRegisterVoIpToken $message');
       },
       onReceiveVoIpPayLoad: (Map<dynamic, dynamic>? message) {
-        text = 'onReceiveVoIpPayLoad $message';
+        debugPrint('onReceiveVoIpPayLoad $message');
+      },
+      onSetTagResult: (GTResultModel result) {
+        debugPrint('onSetTagResult ${result.toMap()}');
+      },
+      onBindAliasResult: (GTResultModel result) {
+        debugPrint('onBindAliasResult ${result.toMap()}');
+      },
+      onUnBindAliasResult: (GTResultModel result) {
+        debugPrint('onUnBindAliasResult ${result.toMap()}');
       },
     );
   }
+
+  ///  停止SDK服务
+  FlGeTui().stopPush();
+
+  ///  开启SDK服务
+  FlGeTui().startPush();
+
+  ///  同步服务端角标
+  FlGeTui().setBadge(badge);
 }
 
 ```
@@ -195,21 +210,18 @@ void fun() {
 
 ```dart
 void fun() {
-  ///  停止SDK服务
-
-  FlGeTui().stopPushWithAndroid();
-
-  ///  开启SDK服务
-  FlGeTui().startPushWithAndroid();
 
   ///  检查集成结果
+  FlGeTui().checkManifestWithAndroid();
+
+  /// android 推送服务状态
   FlGeTui().getPushStatusWithAndroid();
 
-  ///  检测android 推送服务状态
-  FlGeTui().getPushStatusWithAndroid();
+  /// 检测android 是否开启通知权限
+  FlGeTui().checkNotificationsEnabledWithAndroid();
 
-  /// 设置 badge 仅支持华为
-  FlGeTui().setBadge();
+  /// android 打开通知权限页面
+  FlGeTui().openNotificationWithAndroid();
 }
 ```
 
@@ -217,20 +229,27 @@ void fun() {
 
 ```dart
 void fun() {
-  ///  同步服务端角标
-  FlGeTui().setBadge(badge);
 
   ///  复位服务端角标
   FlGeTui().resetBadgeWithIOS();
 
-  ///  同步App本地角标
-  FlGeTui().setLocalBadgeWithIOS(badge);
 
   ///  获取冷启动Apns参数
   FlGeTui().getLaunchNotificationWithIOS();
 
   ///  注册 voip 推送服务
   FlGeTui().voIpRegistrationForIOS();
+
+  /// 是否允许SDK 后台运行（默认值：NO） 备注：可以未启动SDK就调用该方法
+  /// 支持当APP进入后台后，个推是否运行,YES.允许
+  /// 注意：开启后台运行时，需同时开启Signing & Capabilities > Background Modes > Auido, Airplay and Picture in Picture 才能保持长期后台在线，该功能会和音乐播放冲突，使用时请注意。 本方法有缓存，如果要关闭后台运行，需要调用[GeTuiSdk runBackgroundEnable:NO]
+  FlGeTui().runBackgroundEnableWithIOS(true);
+
+  /// 销毁SDK，并且释放资源
+  FlGeTui().destroyWithIOS();
+
+  /// 清空下拉通知栏全部通知,并将角标置“0”，不显示角标
+  FlGeTui().clearAllNotificationForNotificationBarWithIOS();
 }
 ```
 

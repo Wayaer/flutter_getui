@@ -3,81 +3,97 @@
 #import <PushKit/PushKit.h>
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
-#import <UserNotifications/UserNotifications.h>
+
+
 #endif
 
-@interface  GeTuiPlugin()<GeTuiSdkDelegate,UNUserNotificationCenterDelegate,PKPushRegistryDelegate> {
+@interface GeTuiPlugin () <GeTuiSdkDelegate, UNUserNotificationCenterDelegate, PKPushRegistryDelegate> {
     NSDictionary *_launchNotification;
     NSDictionary *_launchOptions;
 }
 
 @end
 
-@implementation GeTuiPlugin{
-    FlutterMethodChannel* _channel;
+@implementation GeTuiPlugin {
+    FlutterMethodChannel *_channel;
 }
 
-+ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-    FlutterMethodChannel* channel = [FlutterMethodChannel
-                                     methodChannelWithName:@"ge_tui"
-                                     binaryMessenger:[registrar messenger]];
-    GeTuiPlugin* plugin = [[GeTuiPlugin alloc] initWithGeTuiPlugin:channel];
++ (void)registerWithRegistrar:(NSObject <FlutterPluginRegistrar> *)registrar {
+    FlutterMethodChannel *channel = [FlutterMethodChannel
+            methodChannelWithName:@"ge_tui"
+                  binaryMessenger:[registrar messenger]];
+    GeTuiPlugin *plugin = [[GeTuiPlugin alloc] initWithGeTuiPlugin:channel];
     [registrar addApplicationDelegate:plugin];
     [registrar addMethodCallDelegate:plugin channel:channel];
-    
+
 }
 
-- (id)initWithGeTuiPlugin :(FlutterMethodChannel*)channel {
+- (id)initWithGeTuiPlugin:(FlutterMethodChannel *)channel {
     self = [super init];
-    _channel=channel;
+    _channel = channel;
     return self;
 }
 
-- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-    if([@"initSDK" isEqualToString:call.method]) {
+- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
+    if ([@"initSDK" isEqualToString:call.method]) {
         [self initSDK:call result:result];
-    } else if([@"voipRegistration" isEqualToString:call.method]) {
+    } else if ([@"voipRegistration" isEqualToString:call.method]) {
         [self voipRegistration];
         result(@(YES));
-    } else  if([@"bindAlias" isEqualToString:call.method]) {
-        NSDictionary *info = call.arguments;
-        [GeTuiSdk bindAlias:info[@"alias"] andSequenceNum:info[@"aSn"]];
+    } else if ([@"bindAlias" isEqualToString:call.method]) {
+        NSDictionary *args = call.arguments;
+        [GeTuiSdk bindAlias:args[@"alias"] andSequenceNum:args[@"sn"]];
         result(@(YES));
-    } else if([@"unbindAlias" isEqualToString:call.method]) {
-        NSDictionary *info = call.arguments;
-        BOOL isSelf= [info[@"isSelf"] boolValue];
-        [GeTuiSdk unbindAlias:info[@"alias"] andSequenceNum:info[@"aSn"] andIsSelf:isSelf];
+    } else if ([@"unbindAlias" isEqualToString:call.method]) {
+        NSDictionary *args = call.arguments;
+        BOOL isSelf = [args[@"isSelf"] boolValue];
+        [GeTuiSdk unbindAlias:args[@"alias"] andSequenceNum:args[@"sn"] andIsSelf:isSelf];
         result(@(YES));
-    } else if([@"setTag" isEqualToString:call.method]) {
-        result([NSNumber numberWithBool:[GeTuiSdk setTags:call.arguments]]);
-    } else if([@"getClientId" isEqualToString:call.method]) {
+    } else if ([@"setTag" isEqualToString:call.method]) {
+        NSDictionary *args = call.arguments;
+        [GeTuiSdk setTags:args[@"tags"] andSequenceNum:args[@"sn"]];
+        result(@(YES));
+    } else if ([@"getClientId" isEqualToString:call.method]) {
         result([GeTuiSdk clientId]);
-    } else if([@"setBadge" isEqualToString:call.method]) {
-        NSUInteger value = [call.arguments integerValue];
-        [GeTuiSdk setBadge:value];
+    } else if ([@"setBadge" isEqualToString:call.method]) {
+        NSDictionary *args = call.arguments;
+        NSInteger badge = [args[@"badge"] intValue];
+        [GeTuiSdk setBadge:(NSUInteger) badge];
+        if ([args[@"badgeWithIOSIcon"] intValue] == 1) {
+            [UIApplication sharedApplication].applicationIconBadgeNumber = badge;
+        }
         result(@(YES));
-    } else if([@"resetBadge" isEqualToString:call.method]) {
+    } else if ([@"resetBadge" isEqualToString:call.method]) {
         [GeTuiSdk resetBadge];
         result(@(YES));
-    } else if([@"setLocalBadge" isEqualToString:call.method]) {
-        NSUInteger value = [call.arguments integerValue];
-        [UIApplication sharedApplication].applicationIconBadgeNumber = value;
+    } else if ([@"startPush" isEqualToString:call.method]) {
+        [GeTuiSdk setPushModeForOff:YES];
         result(@(YES));
-    } else if([@"getLaunchNotification" isEqualToString:call.method]) {
+    } else if ([@"stopPush" isEqualToString:call.method]) {
+        [GeTuiSdk setPushModeForOff:NO];
+        result(@(YES));
+    } else if ([@"runBackgroundEnable" isEqualToString:call.method]) {
+        [GeTuiSdk runBackgroundEnable:[call.arguments boolValue]];
+    } else if ([@"clearAllNotificationForNotificationBar" isEqualToString:call.method]) {
+        [GeTuiSdk clearAllNotificationForNotificationBar];
+        result(@(YES));
+    } else if ([@"destroy" isEqualToString:call.method]) {
+        [GeTuiSdk destroy];
+        result(@(YES));
+    } else if ([@"getLaunchNotification" isEqualToString:call.method]) {
         result(_launchNotification ?: @{});
     } else {
         result(FlutterMethodNotImplemented);
     }
 }
 
-- (void)initSDK:(FlutterMethodCall*)call result:(FlutterResult)result {
+- (void)initSDK:(FlutterMethodCall *)call result:(FlutterResult)result {
     NSDictionary *args = call.arguments;
-    // [ GTSdk ]：使用APPID/APPKEY/APPSECRENT启动个推
     [GeTuiSdk startSdkWithAppId:args[@"appId"] appKey:args[@"appKey"] appSecret:args[@"appSecret"] delegate:self launchingOptions:_launchOptions];
     if (@available(iOS 10.0, *)) {
         [GeTuiSdk registerRemoteNotification:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge)];
         result(@(YES));
-    }else{
+    } else {
         result(@(NO));
     }
 }
@@ -89,7 +105,6 @@
     _launchOptions = launchOptions;
     if (launchOptions != nil)
         _launchNotification = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
-    
     return YES;
 }
 
@@ -106,16 +121,15 @@
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     [_channel invokeMethod:@"onReceiveDeviceToken" arguments:@""];
 }
+
 #pragma mark - iOS 10中收到推送消息
 
 /// 通知展示（iOS10及以上版本）
 /// @param center center
 /// @param notification notification
 /// @param completionHandler completionHandler
-- (void)GeTuiSdkNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification completionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler  API_AVAILABLE(ios(10.0)){
+- (void)GeTuiSdkNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification completionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler  API_AVAILABLE(ios(10.0)) {
     [_channel invokeMethod:@"onNotificationMessageArrived" arguments:notification.request.content.userInfo];
-    // [ 参考代码，开发者注意根据实际需求自行修改 ] 根据APP需要，判断是否要提示用户Badge、Sound、Alert等
-    //completionHandler(UNNotificationPresentationOptionNone); 若不显示通知，则无法点击通知
     completionHandler(UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert);
 }
 
@@ -124,26 +138,54 @@
 /// @param center UNUserNotificationCenter（iOS10及以上版本）
 /// @param response UNNotificationResponse（iOS10及以上版本）
 /// @param completionHandler 用来在后台状态下进行操作（iOS10以下版本）
-- (void)GeTuiSdkDidReceiveNotification:(NSDictionary *)userInfo notificationCenter:(UNUserNotificationCenter *)center response:(UNNotificationResponse *)response fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler  API_AVAILABLE(ios(10.0)){
+- (void)GeTuiSdkDidReceiveNotification:(NSDictionary *)userInfo notificationCenter:(UNUserNotificationCenter *)center response:(UNNotificationResponse *)response fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler  API_AVAILABLE(ios(10.0)) {
     [_channel invokeMethod:@"onNotificationMessageClicked" arguments:userInfo];
     // [ GTSdk ]：将收到的APNs信息传给个推统计
     [GeTuiSdk handleRemoteNotification:response.notification.request.content.userInfo];
-    if(completionHandler) {
+    if (completionHandler) {
         // [ 参考代码，开发者注意根据实际需求自行修改 ] 根据APP需要自行修改参数值
         completionHandler(UIBackgroundFetchResultNoData);
     }
 }
 
 
+- (void)GeTuiSdkDidAliasAction:(NSString *)action result:(BOOL)isSuccess sequenceNum:(NSString *)sn error:(NSError *)error {
+    NSString *code = [NSString stringWithFormat:@"%d", (int) error.code];
+    if ([action isEqual:kGtResponseBindType]) {
+        [_channel invokeMethod:@"onBindAlias" arguments:@{@"isSuccess": @(isSuccess),
+                @"sn": sn,
+                @"code": code
+        }];
+    } else if ([action isEqual:kGtResponseUnBindType]) {
+        [_channel invokeMethod:@"onUnBindAlias" arguments:@{@"isSuccess": @(isSuccess),
+                @"sn": sn,
+                @"code": code
+        }];
+    }
+}
+
+- (void)GeTuiSdkDidSetTagsAction:(NSString *)sn result:(BOOL)isSuccess error:(NSError *)error {
+    NSString *code = [NSString stringWithFormat:@"%d", (int) error.code];
+    [_channel invokeMethod:@"onSetTag" arguments:@{@"isSuccess": @(isSuccess),
+            @"sn": sn,
+            @"code": code
+    }];
+}
+
+- (void)GeTuiSDkDidNotifySdkState:(SdkStatus)status {
+    [_channel invokeMethod:@"onReceiveOnlineState" arguments:@(status == SdkStatusStoped)];
+}
+
+
 #pragma mark - AppLink
 
-- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nonnull))restorationHandler {
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *_Nonnull))restorationHandler {
     //系统用 NSUserActivityTypeBrowsingWeb 表示对应的 universal HTTP links 触发
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-        NSURL* webUrl = userActivity.webpageURL;
+        NSURL *webUrl = userActivity.webpageURL;
         //处理个推APPLink回执统计
         //APPLink url 示例：https://link.applk.cn/getui?n=payload&p=mid， 其中 n=payload 字段存储下发的透传信息，可以根据透传内容进行业务操作。
-        NSString* payload = [GeTuiSdk handleApplinkFeedback:webUrl];
+        NSString *payload = [GeTuiSdk handleApplinkFeedback:webUrl];
         if (payload) {
             // NSLog(@"个推APPLink中携带的透传payload信息: %@,URL : %@", payload, webUrl);
             //用户可根据具体 payload 进行业务处理
@@ -172,7 +214,7 @@
 - (void)pushRegistry:(PKPushRegistry *)registry didUpdatePushCredentials:(PKPushCredentials *)credentials forType:(NSString *)type {
     //向个推服务器注册 VoipToken 为了方便开发者，建议使用新方法
     [GeTuiSdk registerVoipTokenCredentials:credentials.token];
-    
+
     NSString *token = [self getHexStringForData:credentials.token];
     // NSLog(@"\n>>[VoipToken(NSString)]: %@", token);
     [_channel invokeMethod:@"onRegisterVoIpToken" arguments:token];
@@ -182,7 +224,7 @@
 - (void)pushRegistry:(PKPushRegistry *)registry didReceiveIncomingPushWithPayload:(PKPushPayload *)payload forType:(NSString *)type {
     // 个推VOIP回执统计
     [GeTuiSdk handleVoipNotification:payload.dictionaryPayload];
-    
+
     // 接受VOIP推送中的payload内容进行具体业务逻辑处理
     [_channel invokeMethod:@"onReceiveVoIpPayLoad" arguments:payload.dictionaryPayload];
 }
@@ -191,18 +233,17 @@
 
 
 /** SDK收到透传消息回调 */
-- (void)GeTuiSdkDidReceiveSlience:(NSDictionary *)userInfo fromGetui:(BOOL)fromGetui offLine:(BOOL)offLine appId:(NSString *)appId taskId:(NSString *)taskId msgId:(NSString *)msgId fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler{
+- (void)GeTuiSdkDidReceiveSlience:(NSDictionary *)userInfo fromGetui:(BOOL)fromGetui offLine:(BOOL)offLine appId:(NSString *)appId taskId:(NSString *)taskId msgId:(NSString *)msgId fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     // [ GTSdk ]：汇报个推自定义事件(反馈透传消息)
     [GeTuiSdk sendFeedbackMessage:90001 andTaskId:taskId andMsgId:msgId];
     // 透传消息不会有alert，需要自己定义
     NSMutableDictionary *payloadMsgDic = [NSMutableDictionary dictionaryWithDictionary:userInfo];
-    [payloadMsgDic setObject:taskId forKey:@"taskId"];
-    [payloadMsgDic setObject:[NSNumber numberWithBool:offLine] forKey:@"offLine"];
-    [payloadMsgDic setObject:[NSNumber numberWithBool:fromGetui] forKey:@"fromGeTui"];
-    [payloadMsgDic setObject:msgId forKey:@"messageId"];
+    payloadMsgDic[@"taskId"] = taskId;
+    payloadMsgDic[@"offLine"] = @(offLine);
+    payloadMsgDic[@"fromGeTui"] = @(fromGetui);
+    payloadMsgDic[@"messageId"] = msgId;
     [_channel invokeMethod:@"onReceiveMessageData" arguments:[payloadMsgDic copy]];
 }
-
 
 
 #pragma mark - utils

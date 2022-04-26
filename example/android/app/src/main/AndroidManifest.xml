@@ -5,8 +5,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:allowBackup="true"
-        android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name">
         <activity
@@ -24,9 +22,6 @@
             <meta-data
                 android:name="io.com.app.android.SplashScreenUntilFirstFrame"
                 android:value="true" />
-            <meta-data
-                android:name="io.com.embedding.android.SplashScreenDrawable"
-                android:resource="@android:color/white" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

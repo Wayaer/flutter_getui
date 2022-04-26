@@ -3,16 +3,10 @@ package fl.getui
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import com.igexin.sdk.GTIntentService
-import com.igexin.sdk.PushManager
-import com.igexin.sdk.PushService
-import com.igexin.sdk.Tag
-import com.igexin.sdk.message.GTCmdMessage
-import com.igexin.sdk.message.GTNotificationMessage
-import com.igexin.sdk.message.GTTransmitMessage
+import com.igexin.sdk.*
+import com.igexin.sdk.message.*
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodChannel
-import java.util.*
 
 
 class GeTuiPlugin : FlutterPlugin {
@@ -46,7 +40,7 @@ class GeTuiPlugin : FlutterPlugin {
                     result.success(true)
                 }
                 "isPushTurnedOn" -> result.success(
-                    PushManager.getInstance().isPushTurnedOn(context)
+                    result.success(PushManager.getInstance().isPushTurnedOn(context))
                 )
                 "bindAlias" -> {
                     val status = PushManager.getInstance().bindAlias(
@@ -72,18 +66,27 @@ class GeTuiPlugin : FlutterPlugin {
                             tag.name = tags[i]
                             tagArray[i] = tag
                         }
-                        result.success(
-                            PushManager.getInstance()
-                                .setTag(context, tagArray, sn)
-                        )
+                        PushManager.getInstance()
+                            .setTag(context, tagArray, sn)
+                        result.success(true)
                     } else {
-                        result.success(1)
+                        result.success(false)
                     }
                 }
                 "setBadge" -> {
-                    val status = PushManager.getInstance()
-                        .setHwBadgeNum(context, call.arguments as Int)
-                    result.success(status)
+                    val num = call.argument<Int>("badge")!!
+                    val hwStatus = PushManager.getInstance().setHwBadgeNum(context, num)
+                    val statusVIVO = PushManager.getInstance().setVivoAppBadgeNum(context, num)
+                    val statusOPPO = PushManager.getInstance().setOPPOBadgeNum(context, num)
+                    result.success(hwStatus || statusVIVO || statusOPPO)
+                }
+                "checkNotificationsEnabled" -> {
+                    result.success(PushManager.getInstance().areNotificationsEnabled(context))
+                }
+                "openNotification" -> {
+
+                    PushManager.getInstance().openNotification(context)
+                    result.success(true)
                 }
                 else -> result.notImplemented()
             }
@@ -122,17 +125,44 @@ class GeTuiPlugin : FlutterPlugin {
         }
 
         // cid 离线上线通知
-        override fun onReceiveOnlineState(context: Context, bool: Boolean) {
+        override fun onReceiveOnlineState(context: Context, state: Boolean) {
             handle.post {
-                channel.invokeMethod("onReceiveOnlineState", bool)
+                channel.invokeMethod("onReceiveOnlineState", state)
             }
         }
 
         // 各种事件处理回执
         override fun onReceiveCommandResult(
             context: Context,
-            gtCmdMessage: GTCmdMessage
+            message: GTCmdMessage
         ) {
+            val data: MutableMap<String?, Any?> = HashMap()
+            when (message.action) {
+                PushConsts.SET_TAG_RESULT -> {
+                    data["sn"] = (message as SetTagCmdMessage).sn
+                    data["code"] = message.code
+                    data["isSuccess"] = "0" == message.code
+                    handle.post {
+                        channel.invokeMethod("onSetTag", data)
+                    }
+                }
+                PushConsts.BIND_ALIAS_RESULT -> {
+                    data["sn"] = (message as BindAliasCmdMessage).sn
+                    data["code"] = message.code
+                    data["isSuccess"] = "0" == message.code
+                    handle.post {
+                        channel.invokeMethod("onBindAlias", data)
+                    }
+                }
+                PushConsts.UNBIND_ALIAS_RESULT -> {
+                    data["sn"] = (message as UnBindAliasCmdMessage).sn
+                    data["code"] = message.code
+                    data["isSuccess"] = "0" == message.code
+                    handle.post {
+                        channel.invokeMethod("onUnBindAlias", data)
+                    }
+                }
+            }
         }
 
         // 通知到达，只有个推通道下发的通知会回调此方法
@@ -172,6 +202,7 @@ class GeTuiPlugin : FlutterPlugin {
                 channel.invokeMethod("onReceiveDeviceToken", token)
             }
         }
+
     }
 
     class GTPushService : PushService()

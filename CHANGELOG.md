@@ -1,3 +1,7 @@
+## 3.0.0
+
+* Add some API
+
 ## 2.3.0
 
 * Updated version for GeTui SDK

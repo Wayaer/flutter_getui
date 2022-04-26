@@ -6,7 +6,8 @@ import 'package:flutter/services.dart';
 typedef EventHandler = void Function(String? res);
 typedef EventHandlerBool = void Function(bool? online);
 typedef EventHandlerMap = void Function(Map<dynamic, dynamic>? event);
-typedef EventHandlerMessageModel = void Function(GTMessageModel? message);
+typedef EventHandlerMessageModel = void Function(GTMessageModel message);
+typedef EventHandlerGTResultModel = void Function(GTResultModel result);
 
 class FlGeTui {
   factory FlGeTui() => _singleton ??= FlGeTui._();
@@ -27,11 +28,8 @@ class FlGeTui {
       assert(appId != null);
       assert(appKey != null);
       assert(appSecret != null);
-      state = await _channel.invokeMethod<bool?>('initSDK', <String, dynamic>{
-        'appId': appId,
-        'appKey': appKey,
-        'appSecret': appSecret
-      });
+      state = await _channel.invokeMethod<bool?>('initSDK',
+          {'appId': appId, 'appKey': appKey, 'appSecret': appSecret});
     }
     return state ?? false;
   }
@@ -50,6 +48,21 @@ class FlGeTui {
     return state ?? false;
   }
 
+  /// android 打开通知权限页面
+  Future<bool> openNotificationWithAndroid() async {
+    if (!_isAndroid) return false;
+    final bool? state = await _channel.invokeMethod<bool?>('openNotification');
+    return state ?? false;
+  }
+
+  /// 检测android 是否开启通知权限
+  Future<bool> checkNotificationsEnabledWithAndroid() async {
+    if (!_isAndroid) return false;
+    final bool? state =
+        await _channel.invokeMethod<bool?>('checkNotificationsEnabled');
+    return state ?? false;
+  }
+
   /// 获取 clientId
   Future<String?> getClientID() async {
     if (!_supportPlatform) return null;
@@ -57,56 +70,48 @@ class FlGeTui {
   }
 
   /// 绑定 Alias
-  /// sn  绑定序列码 默认为 ‘’
-  Future<bool> bindAlias(String alias, {String sn = ''}) async {
+  /// sn  绑定序列码 默认为 ''
+  /// 绑定结果请调用 [addEventHandler];
+  Future<bool> bindAlias(String alias, String sn) async {
     if (!_supportPlatform) return false;
-    final bool? state = await _channel.invokeMethod<bool?>(
-        'bindAlias', <String, dynamic>{'alias': alias, 'aSn': sn});
+    final bool? state = await _channel
+        .invokeMethod<bool?>('bindAlias', {'alias': alias, 'sn': sn});
     return state ?? false;
   }
 
   /// 解绑 Alias
   /// alias 别名字符串
-  /// sn  绑定序列码 默认为 ‘’
+  /// sn  绑定序列码 默认为 ''
   /// isSelf  是否只对当前cid有效，如果是true，只对当前cid做解绑；如果是false，对所有绑定该别名的cid列表做解绑
-  Future<bool> unbindAlias(String alias,
-      {String sn = '', bool isSelf = true}) async {
+  /// 解绑结果请调用 [addEventHandler];
+  Future<bool> unbindAlias(String alias, String sn,
+      {bool isSelf = true}) async {
     if (!_supportPlatform) return false;
-    final bool? state = await _channel.invokeMethod<bool?>('unbindAlias',
-        <String, dynamic>{'alias': alias, 'aSn': sn, 'isSelf': isSelf});
+    final bool? state = await _channel.invokeMethod<bool?>(
+        'unbindAlias', {'alias': alias, 'sn': sn, 'isSelf': isSelf});
     return state ?? false;
   }
 
   /// 设置Tag
-  /// sn 序列号 仅支持Android
-  /// return code = 0 为成功，其他状态🐴 Android
-  /// ios 成功为0， 失败为 1
-  /// android 失败为 1
-  Future<int?> setTag(List<String> tags, {String sn = ''}) async {
-    if (!_supportPlatform) return null;
+  /// sn：用户自定义的序列号，用来唯一标识该动作
+  /// 设置结果请调用 [addEventHandler];
+  Future<bool> setTag(List<String> tags, String sn) async {
+    if (!_supportPlatform) return false;
     assert(tags.isNotEmpty, 'tags 不能为空');
-    if (_isAndroid) {
-      return await _channel.invokeMethod<int?>(
-          'setTag', <String, dynamic>{'tags': tags, 'sn': sn});
-    } else if (_isIOS) {
-      final bool? status = await _channel.invokeMethod<bool?>(
-          'setTag', <String, dynamic>{'tags': tags, 'sn': sn});
-      return (status ?? false) ? 0 : 1;
-    }
-    return 0;
-  }
-
-  /// 开启推送 only android
-  Future<bool> startPushWithAndroid() async {
-    bool? status = false;
-    if (_isAndroid) status = await _channel.invokeMethod<bool?>('startPush');
+    bool? status =
+        await _channel.invokeMethod<bool?>('setTag', {'tags': tags, 'sn': sn});
     return status ?? false;
   }
 
-  /// 关闭推送 only android
-  Future<bool> stopPushWithAndroid() async {
-    bool? status = false;
-    if (_isAndroid) status = await _channel.invokeMethod<bool?>('stopPush');
+  /// 开启推送
+  Future<bool> startPush() async {
+    bool? status = await _channel.invokeMethod<bool?>('startPush');
+    return status ?? false;
+  }
+
+  /// 关闭推送
+  Future<bool> stopPush() async {
+    bool? status = await _channel.invokeMethod<bool?>('stopPush');
     return status ?? false;
   }
 
@@ -119,10 +124,11 @@ class FlGeTui {
 
   /// setBadge
   /// 支持ios android
-  /// android 仅支持华为
-  Future<bool> setBadge(int badge) async {
+  /// android 仅支持华为 vivo oppo
+  Future<bool> setBadge(int badge, {bool badgeWithIOSIcon = true}) async {
     if (!_supportPlatform) return false;
-    final bool? status = await _channel.invokeMethod<bool?>('setBadge', badge);
+    final bool? status = await _channel.invokeMethod<bool?>(
+        'setBadge', {'badge': badge, 'badgeWithIOSIcon': badgeWithIOSIcon});
     return status ?? false;
   }
 
@@ -136,10 +142,34 @@ class FlGeTui {
   }
 
   /// only ios
-  Future<bool> setLocalBadgeWithIOS(int badge) async {
+  /// 清空下拉通知栏全部通知,并将角标置“0”，不显示角标
+  Future<bool> clearAllNotificationForNotificationBarWithIOS() async {
+    if (_isIOS) {
+      final bool? status = await _channel
+          .invokeMethod<bool?>('clearAllNotificationForNotificationBar');
+      return status ?? false;
+    }
+    return false;
+  }
+
+  /// only ios
+  /// 是否允许SDK 后台运行（默认值：NO） 备注：可以未启动SDK就调用该方法
+  /// 支持当APP进入后台后，个推是否运行,YES.允许
+  /// 注意：开启后台运行时，需同时开启Signing & Capabilities > Background Modes > Auido, Airplay and Picture in Picture 才能保持长期后台在线，该功能会和音乐播放冲突，使用时请注意。 本方法有缓存，如果要关闭后台运行，需要调用[GeTuiSdk runBackgroundEnable:NO]
+  Future<bool> runBackgroundEnableWithIOS(bool enable) async {
     if (_isIOS) {
       final bool? status =
-          await _channel.invokeMethod<bool?>('setLocalBadge', badge);
+          await _channel.invokeMethod<bool?>('runBackgroundEnable', enable);
+      return status ?? false;
+    }
+    return false;
+  }
+
+  /// only ios
+  /// 销毁SDK，并且释放资源
+  Future<bool> destroyWithIOS() async {
+    if (_isIOS) {
+      final bool? status = await _channel.invokeMethod<bool?>('destroy');
       return status ?? false;
     }
     return false;
@@ -164,7 +194,7 @@ class FlGeTui {
     /// ios 收到APNS消息
     EventHandlerMessageModel? onNotificationMessageArrived,
 
-    /// android 在线状态
+    /// cid 在线状态 支持 android  ios
     EventHandlerBool? onReceiveOnlineState,
 
     /// android 通知点击，只有个推通道下发的通知会回调此方法
@@ -178,54 +208,54 @@ class FlGeTui {
 
     /// ios 收到VoIP消息
     EventHandlerMap? onReceiveVoIpPayLoad,
+
+    /// tag 绑定结果回调  支持 android  ios
+    EventHandlerGTResultModel? onSetTagResult,
+
+    /// 绑定别名结果回调  支持 android  ios
+    EventHandlerGTResultModel? onBindAliasResult,
+
+    /// 解绑别名结果回调  支持 android  ios
+    EventHandlerGTResultModel? onUnBindAliasResult,
   }) {
     if (!_supportPlatform) return;
     _channel.setMethodCallHandler((MethodCall call) async {
       switch (call.method) {
         case 'onReceiveOnlineState':
-          if (onReceiveOnlineState == null) return;
-          return onReceiveOnlineState(call.arguments as bool?);
+          onReceiveOnlineState?.call(call.arguments as bool?);
+          break;
         case 'onReceiveMessageData':
-          if (onReceiveMessageData == null) return;
-          final Map<dynamic, dynamic>? map =
-              call.arguments as Map<dynamic, dynamic>?;
-          if (map != null) {
-            return onReceiveMessageData(GTMessageModel.fromJson(map));
-          }
-          return onReceiveMessageData(null);
+          onReceiveMessageData?.call(GTMessageModel.fromJson(call.arguments));
+          break;
         case 'onNotificationMessageArrived':
-          if (onNotificationMessageArrived == null) return;
-          final Map<dynamic, dynamic>? map =
-              call.arguments as Map<dynamic, dynamic>?;
-          if (map != null) {
-            return onNotificationMessageArrived(GTMessageModel.fromJson(map));
-          }
-          return onNotificationMessageArrived(null);
-
+          onNotificationMessageArrived
+              ?.call(GTMessageModel.fromJson(call.arguments));
+          break;
         case 'onNotificationMessageClicked':
-          if (onNotificationMessageClicked == null) return;
-          final Map<dynamic, dynamic>? map =
-              call.arguments as Map<dynamic, dynamic>?;
-          if (map != null) {
-            return onNotificationMessageClicked(GTMessageModel.fromJson(map));
-          }
-          return onNotificationMessageClicked(null);
-
+          onNotificationMessageClicked
+              ?.call(GTMessageModel.fromJson(call.arguments));
+          break;
         case 'onReceiveDeviceToken':
-          if (onReceiveDeviceToken == null) return;
-          return onReceiveDeviceToken(call.arguments.toString());
-
+          onReceiveDeviceToken?.call(call.arguments?.toString());
+          break;
         case 'onAppLinkPayload':
-          if (onAppLinkPayload == null) return;
-          return onAppLinkPayload(call.arguments.toString());
-
+          onAppLinkPayload?.call(call.arguments?.toString());
+          break;
         case 'onRegisterVoIpToken':
-          if (onRegisterVoIpToken == null) return;
-          return onRegisterVoIpToken(call.arguments.toString());
-
+          onRegisterVoIpToken?.call(call.arguments?.toString());
+          break;
         case 'onReceiveVoIpPayLoad':
-          if (onReceiveVoIpPayLoad == null) return;
-          return onReceiveVoIpPayLoad(call.arguments as Map<dynamic, dynamic>?);
+          onReceiveVoIpPayLoad?.call(call.arguments);
+          break;
+        case 'onSetTag':
+          onSetTagResult?.call(GTResultModel.fromJson(call.arguments));
+          break;
+        case 'onBindAlias':
+          onBindAliasResult?.call(GTResultModel.fromJson(call.arguments));
+          break;
+        case 'onUnBindAlias':
+          onUnBindAliasResult?.call(GTResultModel.fromJson(call.arguments));
+          break;
         default:
           throw UnsupportedError('Unrecognized Event');
       }
@@ -282,14 +312,32 @@ class GTMessageModel {
   bool? fromGeTui;
   String? sound;
 
-  Map<String, dynamic> get toMap => <String, dynamic>{
+  Map<String, dynamic> toMap() => {
         'messageId': messageId,
         'title': title,
         'content': content,
         'payload': payload,
         'payloadId': payloadId,
-        'taskId': taskId
+        'taskId': taskId,
+        'offLine': offLine,
+        'fromGeTui': fromGeTui,
+        'sound': sound
       };
+}
+
+class GTResultModel {
+  GTResultModel.fromJson(Map<dynamic, dynamic> json) {
+    isSuccess = json['isSuccess'] as bool?;
+    code = json['code'] as String?;
+    sn = json['sn'] as String?;
+  }
+
+  bool? isSuccess;
+  String? code;
+  String? sn;
+
+  Map<String, dynamic> toMap() =>
+      {'isSuccess': isSuccess, 'code': code, 'sn': sn};
 }
 
 class _ApsModel {

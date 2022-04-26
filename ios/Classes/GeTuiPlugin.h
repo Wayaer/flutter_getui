@@ -1,5 +1,5 @@
 #import <Flutter/Flutter.h>
 
-@interface GeTuiPlugin : NSObject<FlutterPlugin>
+@interface GeTuiPlugin : NSObject <FlutterPlugin>
 
 @end
