@@ -1,6 +1,6 @@
 name: flutter_getui
 description: getui plugin for flutter, only Android and IOS are supported
-version: 3.0.0
+version: 3.0.1
 repository: https://github.com/Wayaer/flutter_getui.git
 
 environment:

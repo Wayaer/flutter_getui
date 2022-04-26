@@ -51,9 +51,10 @@ class GeTuiPlugin : FlutterPlugin {
                 }
                 "unbindAlias" -> {
                     var isSelf = call.argument<Boolean>("isSelf")
+                    val sn = call.argument<String>("sn")
                     if (isSelf == null) isSelf = false
                     val status = PushManager.getInstance()
-                        .unBindAlias(context, call.argument("alias"), isSelf)
+                        .unBindAlias(context, call.argument("alias"), isSelf, sn)
                     result.success(status)
                 }
                 "setTag" -> {
@@ -66,9 +67,9 @@ class GeTuiPlugin : FlutterPlugin {
                             tag.name = tags[i]
                             tagArray[i] = tag
                         }
-                        PushManager.getInstance()
-                            .setTag(context, tagArray, sn)
-                        result.success(true)
+                        val status = PushManager.getInstance()
+                            .setTag(context, tagArray, sn) == 0
+                        result.success(status)
                     } else {
                         result.success(false)
                     }
