@@ -284,10 +284,10 @@ class GTMessageModel {
     content = json['content'] as String?;
     final Map<dynamic, dynamic>? aps = json['aps'] as Map<dynamic, dynamic>?;
     if (aps != null) {
-      final _ApsModel _apsModel = _ApsModel.fromJson(aps);
-      title = _apsModel.alert?.title;
-      content = _apsModel.alert?.body;
-      sound = _apsModel.sound;
+      final _ApsModel apsModel = _ApsModel.fromJson(aps);
+      title = apsModel.alert?.title;
+      content = apsModel.alert?.body;
+      sound = apsModel.sound;
     }
   }
 
@@ -341,8 +341,6 @@ class GTResultModel {
 }
 
 class _ApsModel {
-  _ApsModel({this.mutableContent, this.alert, this.badge, this.sound});
-
   _ApsModel.fromJson(Map<dynamic, dynamic> json) {
     mutableContent = json['mutable-content'] as int?;
     alert = json['alert'] != null
@@ -359,8 +357,6 @@ class _ApsModel {
 }
 
 class _AlertModel {
-  _AlertModel({this.subtitle, this.title, this.body});
-
   _AlertModel.fromJson(Map<dynamic, dynamic> json) {
     subtitle = json['subtitle'] as String?;
     title = json['title'] as String?;

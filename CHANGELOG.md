@@ -1,3 +1,7 @@
+## 4.0.0
+
+* Upgrade Flutter@3.0.0
+
 ## 3.0.1
 
 * Add some API

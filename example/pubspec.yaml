@@ -1,4 +1,4 @@
-name: getui
+name: example
 description: A new Flutter project.
 version: 1.0.0+1
 publish_to: 'none'
@@ -9,12 +9,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_curiosity: ^3.5.0
+  flutter_curiosity: ^4.0.1
   flutter_getui:
     path: ../
 
 dev_dependencies:
-  flutter_lints: ^1.0.4
+  flutter_lints: ^2.0.1
 
 flutter:
   uses-material-design: true
