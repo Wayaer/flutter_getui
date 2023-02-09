@@ -1,3 +1,7 @@
+## 4.1.0
+
+* Updated version for GeTui SDK
+
 ## 4.0.0
 
 * Upgrade Flutter@3.0.0
